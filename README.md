@@ -11,6 +11,18 @@ using the OGC CITE validator, e.g., OGC API Processes.
 
 ## Usage
 
+```yaml
+steps:
+  - uses: geo-engine/ogc-validator@v1
+    with:
+      service-url: https://example.com
+      ogc-api-processes: true
+      ogc-api-processes-version: 1.3-teamengine-6.0.0-RC2
+      echoprocessid: echo
+      ogc-api-processes-ignore: |-
+        foobar
+```
+
 ### Inputs
 
 | Name                        | Description                                                                      | Required | Default                    |
