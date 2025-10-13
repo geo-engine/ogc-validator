@@ -64,8 +64,4 @@ jobs:
               id: test-action
               uses: ./
               with:
-                  service-url: http://localhost:8484/
-
-            - name: Print Output
-              id: output
-              run: echo "${{ steps.test-action.outputs.time }}"
+                  service-url: https://api.github.com
