@@ -54,18 +54,22 @@ export async function run(): Promise<void> {
         if (error instanceof Error) core.setFailed(error.message);
     }
 
+    const tableHeaders = [
+        'Test Suite',
+        'Result',
+        'Passed',
+        'Skipped',
+        'Failed',
+        '(Failed but ignored)',
+        'Total',
+    ];
+
+    printResults(summaries, tableHeaders);
+
     core.summary
         .addHeading('OGC API - Validation Summary')
         .addTable([
-            [
-                { data: 'Test Suite', header: true },
-                { data: 'Result', header: true },
-                { data: 'Passed', header: true },
-                { data: 'Skipped', header: true },
-                { data: 'Failed', header: true },
-                { data: '(Failed but ignored)', header: true },
-                { data: 'Total', header: true },
-            ],
+            tableHeaders.map((header) => ({ data: header, header: true })),
             ...summaries.map((s) => [
                 s.name,
                 s.success ? '✅ Success' : '❌ Failure',
@@ -132,7 +136,7 @@ export async function _validateOGCAPIProcesses(
             iut: serviceUrl,
             echoprocessid: echoProcessId,
         }).toString();
-    core.notice(`Using test URL: ${url}`);
+    core.info(`Using test URL: ${url}`);
     const testRequest = new Request(url, {
         method: 'GET',
         headers: {
@@ -232,4 +236,39 @@ async function extractResults(xml: string): Promise<Array<TestResult>> {
     );
 
     return results;
+}
+
+function printResults(
+    summaries: Array<TestSummary>,
+    tableHeader: string[]
+): void {
+    const tableRows = summaries.map((s) => [
+        s.name,
+        s.success ? '✅ Success' : '❌ Failure',
+        s.passed.toString(),
+        s.skipped.toString(),
+        s.failed.toString(),
+        s.ignored.toString(),
+        s.total.toString(),
+    ]);
+
+    const columnWidths = tableHeader.map((_, colIndex) =>
+        Math.max(
+            tableHeader[colIndex].length,
+            ...tableRows.map((row) => row[colIndex].length)
+        )
+    );
+
+    const formatRow = (row: string[]) =>
+        row
+            .map((cell, colIndex) => cell.padEnd(columnWidths[colIndex], ' '))
+            .join(' | ');
+
+    const separator = columnWidths
+        .map((width) => '-'.repeat(width))
+        .join('-|-');
+
+    console.info('\n' + formatRow(tableHeader));
+    console.info(separator);
+    tableRows.forEach((row) => console.info(formatRow(row)));
 }
