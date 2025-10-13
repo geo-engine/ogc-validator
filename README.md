@@ -45,10 +45,10 @@ development.
     npm install
     ```
 
-2. Create an `.env` file in the root of your repository to define the necessary
+1. Create an `.env` file in the root of your repository to define the necessary
    environment variables. Cf. [`.env.example`](./.env.example) for an example.
 
-3. Test the action locally:
+1. Test the action locally:
 
 ```bash
 npx @github/local-action . src/main.ts .env
@@ -62,7 +62,7 @@ npx @github/local-action . src/main.ts .env
     npm run bundle
     ```
 
-2. :white_check_mark: Run the tests
+1. :white_check_mark: Run the tests
 
     ```bash
     $ npm test
