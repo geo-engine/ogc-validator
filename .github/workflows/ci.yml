@@ -53,13 +53,6 @@ jobs:
               id: checkout
               uses: actions/checkout@v5
 
-            - name: Start HTTP Server
-              id: start-server
-              run: |
-                  npm install -g http-server
-                  nohup http-server -p 8484 &
-                  sleep 2
-
             - name: Test Local Action
               id: test-action
               uses: ./
