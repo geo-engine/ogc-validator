@@ -1,39 +1,4 @@
-/**
- * Unit tests for the action's main functionality, src/main.ts
- *
- * To mock dependencies in ESM, you can create fixtures that export mock
- * functions and objects. For example, the core module is mocked in this test,
- * so that the actual '@actions/core' module is not imported.
- */
-import { jest } from '@jest/globals';
-import * as core from '../__fixtures__/core.js';
-import { waitForWebsite } from '../__fixtures__/wait.js';
 
-// Mocks should be declared before the module being tested is imported.
-jest.unstable_mockModule('@actions/core', () => core);
-jest.unstable_mockModule('../src/wait.js', () => ({ waitForWebsite }));
-
-const { _validateOGCAPIProcesses } = await import('../src/main.js');
-
-describe('main.ts', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
-    it('Validates OGC API Processes successfully', async () => {
-        const mockServiceUrl = 'http://mock-service-url';
-        const mockEchoProcessId = 'mock-echo-process-id';
-        const mockIgnoreList: string[] = ['test1'];
-
-        waitForWebsite.mockImplementation(
-            async (_url: string, _timeoutInSeconds: number) => void 0
-        );
-
-        // Mock the fetch function to simulate a successful test result
-        global.fetch = jest.fn<typeof fetch>().mockImplementation(async () => {
-            return {
-                ok: true,
-                text: async () => `
                     <testng-results>
                         <suite name="Suite1" duration-ms="2000">
                         <groups>
@@ -76,24 +41,4 @@ describe('main.ts', () => {
                         </test>
                         </suite>
                     </testng-results>
-                        `,
-            } as unknown as Response;
-        });
-
-        const result = await _validateOGCAPIProcesses(
-            mockServiceUrl,
-            mockEchoProcessId,
-            mockIgnoreList
-        );
-
-        expect(result).toEqual({
-            name: 'OGC API - Processes',
-            success: true,
-            passed: 1,
-            skipped: 1,
-            failed: 1,
-            ignored: 1,
-            total: 3,
-        });
-    });
-});
+                        

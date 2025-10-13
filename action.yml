@@ -1,24 +1,37 @@
-name: The name of your action here
-description: Provide a description here
-author: Your name or organization here
+name: OGC Validator Action
+description: A GitHub Action to validate OGC API endpoints.
+author: Geo Engine GmbH
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: heart
-  color: red
+    icon: check-square
+    color: blue
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: Your input description here
-    required: true
-    default: '1000'
+    service-url:
+        description: URL of the OGC endpoint to validate
+        required: true
+        default: http://localhost:8484/
+    ogc-api-processes:
+        description: If set, validate OGC API - Processes
+        default: false
+    ogc-api-processes-version:
+        description: Version of OGC API - Processes to validate against
+        default: '1.3-teamengine-6.0.0-RC2'
+    echoprocessid:
+        description:
+            The process identifier to run for OGC API - Processes validation
+        default: echo
+    ogc-api-processes-ignore:
+        description:
+            Multi-line list of test identifiers to ignore for OGC API -
+            Processes validation
+        default: ''
 
 # Define your outputs here.
-outputs:
-  time:
-    description: Your output description here
+# outputs:
 
 runs:
-  using: node24
-  main: dist/index.js
+    using: node24
+    main: dist/index.js
