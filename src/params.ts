@@ -2,14 +2,19 @@ import * as core from '@actions/core';
 
 interface Params {
     serviceUrl: string;
-    ogcApiProcesses?: OgcApiProcessesParams;
+    ogcApiProcesses10?: OgcApiProcesses10Params;
 }
 
-interface OgcApiProcessesParams {
-    ogcApiProcessesVersion: string;
+interface OgcApiProcesses10Params {
+    containerTag: string;
     echoProcessId: string;
-    ogcApiProcessesIgnore: string[];
+    testsToIgnore: string[];
 }
+
+const OGC_API_PROCESSES_10_CONTAINER_TAG_PARAM =
+    'ogc-api-processes-container-tag';
+const OGC_API_PROCESSES_10_ECHOPROCESSID_PARAM = 'echoprocessid';
+const OGC_API_PROCESSES_10_TESTS_TO_IGNORE_PARAM = 'ogc-api-processes-ignore';
 
 export function getParams(): Params {
     const serviceUrl: string = core.getInput('service-url', {
@@ -20,18 +25,20 @@ export function getParams(): Params {
     const params: Params = { serviceUrl };
 
     if (core.getBooleanInput('ogc-api-processes')) {
-        const ogcApiProcessesVersion: string = core.getInput(
-            'ogc-api-processes-version'
+        const containerTag: string = core.getInput(
+            OGC_API_PROCESSES_10_CONTAINER_TAG_PARAM
         );
-        const echoProcessId: string = core.getInput('echoprocessid');
-        const ogcApiProcessesIgnore: string[] = core.getMultilineInput(
-            'ogc-api-processes-ignore',
+        const echoProcessId: string = core.getInput(
+            OGC_API_PROCESSES_10_ECHOPROCESSID_PARAM
+        );
+        const testsToIgnore: string[] = core.getMultilineInput(
+            OGC_API_PROCESSES_10_TESTS_TO_IGNORE_PARAM,
             { trimWhitespace: true }
         );
-        params.ogcApiProcesses = {
-            ogcApiProcessesVersion,
+        params.ogcApiProcesses10 = {
+            containerTag,
             echoProcessId,
-            ogcApiProcessesIgnore,
+            testsToIgnore,
         };
     }
 
@@ -41,15 +48,16 @@ export function getParams(): Params {
 export function printParams(params: Params): void {
     core.info('Using parameters:');
     core.info(`- service-url: ${params.serviceUrl}`);
-    if (params.ogcApiProcesses) {
+    if (params.ogcApiProcesses10) {
         core.info(
-            `- ogc-api-processes-version: ${params.ogcApiProcesses.ogcApiProcessesVersion}`
+            `- ${OGC_API_PROCESSES_10_CONTAINER_TAG_PARAM}: ${params.ogcApiProcesses10.containerTag}`
         );
-        core.info(`- echoprocessid: ${params.ogcApiProcesses.echoProcessId}`);
         core.info(
-            `- ogc-api-processes-ignore: ${
-                params.ogcApiProcesses.ogcApiProcessesIgnore.join(', ') ||
-                '(none)'
+            `- ${OGC_API_PROCESSES_10_ECHOPROCESSID_PARAM}: ${params.ogcApiProcesses10.echoProcessId}`
+        );
+        core.info(
+            `- ${OGC_API_PROCESSES_10_TESTS_TO_IGNORE_PARAM}: ${
+                params.ogcApiProcesses10.testsToIgnore.join(', ') || '(none)'
             }`
         );
     }

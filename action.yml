@@ -16,8 +16,8 @@ inputs:
     ogc-api-processes:
         description: If set, validate OGC API - Processes
         default: false
-    ogc-api-processes-version:
-        description: Version of OGC API - Processes to validate against
+    ogc-api-processes-container-tag:
+        description: Container tag to use for OGC API - Processes 1.0 validation
         default: '1.3-teamengine-6.0.0-RC2'
     echoprocessid:
         description:

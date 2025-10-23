@@ -17,7 +17,7 @@ steps:
       with:
           service-url: https://example.com
           ogc-api-processes: true
-          ogc-api-processes-version: 1.3-teamengine-6.0.0-RC2
+          ogc-api-processes-container-tag: 1.3-teamengine-6.0.0-RC2
           echoprocessid: echo
           ogc-api-processes-ignore: |-
               foobar
@@ -29,7 +29,7 @@ steps:
 | --------------------------- | -------------------------------------------------------------------------------- | -------- | -------------------------- |
 | `service-url`               | URL of the OGC endpoint to validate                                              | `true`   | `http://localhost:8484/`   |
 | `ogc-api-processes`         | If set, validate OGC API - Processes                                             | `false`  | `false`                    |
-| `ogc-api-processes-version` | Version of OGC API - Processes to validate against                               | `false`  | `1.3-teamengine-6.0.0-RC2` |
+| `ogc-api-processes-container-tag` | Container tag to use for OGC API - Processes 1.0 validation                   | `false`  | `1.3-teamengine-6.0.0-RC2` |
 | `echoprocessid`             | The process identifier to run for OGC API - Processes validation                 | `false`  | `echo`                     |
 | `ogc-api-processes-ignore`  | Multi-line list of test identifiers to ignore for OGC API - Processes validation | `false`  | `''`                       |
 

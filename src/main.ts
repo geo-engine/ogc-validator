@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { waitForWebsite } from './wait.js';
 import { exec, getExecOutput } from '@actions/exec';
-import * as testResultsReporter from 'test-results-parser';
+import { XMLParser } from 'fast-xml-parser';
 import * as fs from 'fs/promises';
 import { getParams, printParams } from './params.js';
 
@@ -23,15 +23,15 @@ export async function run(): Promise<void> {
         core.info(`Waiting for ${params.serviceUrl} …`);
         await waitForWebsite(params.serviceUrl, WAIT_TIMEOUT);
 
-        if (params.ogcApiProcesses) {
-            core.startGroup('OGC API - Processes Validation');
+        if (params.ogcApiProcesses10) {
+            core.startGroup('OGC API - Processes 1.0 Validation');
             core.info('Validating OGC API - Processes …');
             summaries.push(
-                await validateOGCAPIProcesses(
+                await validateOGCAPIProcesses10(
                     params.serviceUrl,
-                    params.ogcApiProcesses.ogcApiProcessesVersion,
-                    params.ogcApiProcesses.echoProcessId,
-                    params.ogcApiProcesses.ogcApiProcessesIgnore
+                    params.ogcApiProcesses10.containerTag,
+                    params.ogcApiProcesses10.echoProcessId,
+                    params.ogcApiProcesses10.testsToIgnore
                 )
             );
             core.endGroup();
@@ -83,9 +83,9 @@ export async function run(): Promise<void> {
         .write();
 }
 
-async function validateOGCAPIProcesses(
+async function validateOGCAPIProcesses10(
     serviceUrl: string,
-    ogcApiProcessesVersion: string,
+    containerTag: string,
     echoProcessId: string,
     ogcApiCoveragesIgnore: string[]
 ): Promise<TestSummary> {
@@ -98,7 +98,7 @@ async function validateOGCAPIProcesses(
                 '--detach',
                 '--network',
                 'host',
-                `docker.io/ogccite/ets-ogcapi-processes10:${ogcApiProcessesVersion}`,
+                `docker.io/ogccite/ets-ogcapi-processes10:${containerTag}`,
             ],
             {
                 silent: true,
@@ -124,7 +124,8 @@ async function validateOGCAPIProcesses(
 export async function _validateOGCAPIProcesses(
     serviceUrl: string,
     echoProcessId: string,
-    ogcApiCoveragesIgnore: string[]
+    ogcApiCoveragesIgnore: string[],
+    debugEnabled = false
 ): Promise<TestSummary> {
     core.info(`Waiting for Team Engine server …`);
     await waitForWebsite(VALIDATOR_SERVER_URL, WAIT_TIMEOUT);
@@ -154,7 +155,11 @@ export async function _validateOGCAPIProcesses(
     }
 
     const testResultXml = await testResult.text();
-    const results = await extractResults(testResultXml);
+    if (debugEnabled) {
+        const filePath = 'test-results-processes.xml';
+        await fs.writeFile(filePath, testResultXml, { encoding: 'utf8' });
+    }
+    const { suite, results } = await extractResults(testResultXml);
 
     const total = results.length;
     const passed = results.filter((r) => r.status === 'PASS').length;
@@ -171,6 +176,7 @@ export async function _validateOGCAPIProcesses(
             core.warning(`${message} (SKIPPED)`, {
                 title: result.name,
             });
+            printAttributes(result.attributes);
         }
 
         if (result.status === 'FAIL') {
@@ -180,13 +186,14 @@ export async function _validateOGCAPIProcesses(
             core.error(`${message} (${indicator})`, {
                 title: result.name,
             });
+            printAttributes(result.attributes);
         }
     }
 
     const failedAndNotIgnored = failed - ignored;
 
     return {
-        name: 'OGC API - Processes',
+        name: suite,
         success: failedAndNotIgnored === 0,
         passed,
         skipped,
@@ -196,10 +203,19 @@ export async function _validateOGCAPIProcesses(
     };
 }
 
+function printAttributes(attributes?: Record<string, string>): void {
+    if (!attributes) return;
+
+    for (const [key, value] of Object.entries(attributes)) {
+        core.notice(`  ${key}:\n${value}`);
+    }
+}
+
 interface TestResult {
     name: string;
     status: 'PASS' | 'FAIL' | 'SKIP';
     message?: string;
+    attributes?: Record<string, string>;
 }
 
 interface TestSummary {
@@ -212,30 +228,88 @@ interface TestSummary {
     total: number;
 }
 
-async function extractResults(xml: string): Promise<Array<TestResult>> {
-    const filePath = 'test-results.xml';
-    await fs.writeFile(filePath, xml, {
-        encoding: 'utf8',
-    });
+interface TestNgSuite {
+    test: Array<TestNgTest>;
+}
 
-    const { result: testResults, errors } = testResultsReporter.parseV2({
-        type: 'testng',
-        files: [filePath],
-        // files: ['test-results.fix.xml'],
+interface TestNgTest {
+    class: Array<TestNgClass>;
+}
+
+interface TestNgClass {
+    'test-method': Array<TestNgTestMethod>;
+}
+
+interface TestNgTestMethod {
+    name: string;
+    status: string;
+    'is-config'?: boolean;
+    exception?: { message: string };
+    attributes?: { attribute: Array<TestNgAttribute> };
+}
+
+interface TestNgAttribute {
+    name: string;
+    '#text': string;
+}
+
+interface ExtractionResult {
+    suite: string;
+    results: Array<TestResult>;
+}
+
+async function extractResults(xml: string): Promise<ExtractionResult> {
+    const parser = new XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: '',
+        isArray: (name: string, _jpath: string) => {
+            return [
+                'suite',
+                'test',
+                'class',
+                'test-method',
+                'attribute',
+            ].includes(name);
+        },
     });
-    if (errors.length) {
-        throw new Error(`Failed to parse test results: ${errors.join('; ')}`);
+    const parsedXml = parser.parse(xml);
+
+    if (!parsedXml || !parsedXml['testng-results']) {
+        throw new Error('Invalid or missing test results in the XML.');
     }
 
-    const results = testResults.suites.flatMap((suite) =>
-        suite.cases.map((testCase) => ({
-            name: testCase.name,
-            status: testCase.status.toUpperCase() as 'PASS' | 'FAIL' | 'SKIP',
-            message: testCase.failure || undefined,
-        }))
-    );
+    const testSuites: TestNgSuite[] = parsedXml['testng-results'].suite;
 
-    return results;
+    const results: Array<TestResult> = [];
+
+    for (const testMethod of testSuites.flatMap((suite) =>
+        suite.test.flatMap((test) =>
+            test['class'].flatMap((testClass) => testClass['test-method'])
+        )
+    )) {
+        if (testMethod['is-config']) {
+            continue;
+        }
+
+        results.push({
+            name: testMethod.name,
+            status: testMethod.status.toUpperCase() as 'PASS' | 'FAIL' | 'SKIP',
+            message: testMethod.exception?.message,
+            attributes: testMethod.attributes
+                ? Object.fromEntries(
+                      testMethod.attributes.attribute.map((attr) => [
+                          attr.name,
+                          attr['#text'],
+                      ])
+                  )
+                : undefined,
+        });
+    }
+
+    return {
+        suite: parsedXml['testng-results'].suite[0].name,
+        results,
+    };
 }
 
 function printResults(
