@@ -28,6 +28,7 @@ describe('getParams', () => {
 
         expect(params).toEqual({
             serviceUrl: 'https://example.com',
+            teamenginePort: 8080,
         });
     });
 
@@ -36,7 +37,7 @@ describe('getParams', () => {
             switch (name) {
                 case 'service-url':
                     return 'https://example.com';
-                case 'ogc-api-processes-version':
+                case 'ogc-api-processes-container-tag':
                     return '1.0.0';
                 case 'echoprocessid':
                     return 'echo-id';
@@ -54,10 +55,15 @@ describe('getParams', () => {
 
         expect(params).toEqual({
             serviceUrl: 'https://example.com',
-            ogcApiProcesses: {
-                ogcApiProcessesVersion: '1.0.0',
+            teamenginePort: 8080,
+            ogcApiProcesses10: {
+                containerTag: '1.0.0',
                 echoProcessId: 'echo-id',
-                ogcApiProcessesIgnore: ['ignore1', 'ignore2'],
+                testsToIgnore: ['ignore1', 'ignore2'],
+            },
+            ogcApiFeatures10: {
+                containerTag: '',
+                testsToIgnore: ['ignore1', 'ignore2'],
             },
         });
     });
@@ -71,6 +77,7 @@ describe('printParams', () => {
     it('should log parameters without ogcApiProcesses', () => {
         const params = {
             serviceUrl: 'https://example.com',
+            teamenginePort: 8080,
         };
 
         printParams(params);
@@ -79,15 +86,17 @@ describe('printParams', () => {
         expect(core.info).toHaveBeenCalledWith(
             '- service-url: https://example.com'
         );
+        expect(core.info).toHaveBeenCalledWith('- teamengine-port: 8080');
     });
 
     it('should log parameters with ogcApiProcesses', () => {
         const params = {
             serviceUrl: 'https://example.com',
-            ogcApiProcesses: {
-                ogcApiProcessesVersion: '1.0.0',
+            teamenginePort: 8080,
+            ogcApiProcesses10: {
+                containerTag: '1.0.0',
                 echoProcessId: 'echo-id',
-                ogcApiProcessesIgnore: ['ignore1', 'ignore2'],
+                testsToIgnore: ['ignore1', 'ignore2'],
             },
         };
 
@@ -98,7 +107,7 @@ describe('printParams', () => {
             '- service-url: https://example.com'
         );
         expect(core.info).toHaveBeenCalledWith(
-            '- ogc-api-processes-version: 1.0.0'
+            '- ogc-api-processes-container-tag: 1.0.0'
         );
         expect(core.info).toHaveBeenCalledWith('- echoprocessid: echo-id');
         expect(core.info).toHaveBeenCalledWith(
@@ -109,10 +118,11 @@ describe('printParams', () => {
     it('should log parameters with empty ogcApiProcessesIgnore', () => {
         const params = {
             serviceUrl: 'https://example.com',
-            ogcApiProcesses: {
-                ogcApiProcessesVersion: '1.0.0',
+            teamenginePort: 8080,
+            ogcApiProcesses10: {
+                containerTag: '1.0.0',
                 echoProcessId: 'echo-id',
-                ogcApiProcessesIgnore: [],
+                testsToIgnore: [],
             },
         };
 
@@ -123,7 +133,7 @@ describe('printParams', () => {
             '- service-url: https://example.com'
         );
         expect(core.info).toHaveBeenCalledWith(
-            '- ogc-api-processes-version: 1.0.0'
+            '- ogc-api-processes-container-tag: 1.0.0'
         );
         expect(core.info).toHaveBeenCalledWith('- echoprocessid: echo-id');
         expect(core.info).toHaveBeenCalledWith(

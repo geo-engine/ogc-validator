@@ -1,7 +1,7 @@
 import require$$0 from 'os';
 import require$$0$1 from 'crypto';
 import require$$1 from 'fs';
-import require$$1$5 from 'path';
+import require$$1$4 from 'path';
 import require$$2 from 'http';
 import require$$3 from 'https';
 import require$$0$4 from 'net';
@@ -13,18 +13,16 @@ import require$$0$5 from 'stream';
 import require$$7 from 'buffer';
 import require$$8 from 'querystring';
 import require$$14 from 'stream/web';
-import require$$0$7 from 'node:stream';
-import require$$1$2 from 'node:util';
-import require$$0$6 from 'node:events';
-import require$$0$8 from 'worker_threads';
+import { createRequire } from 'node:module';
+import require$$0$6 from 'worker_threads';
 import require$$2$1 from 'perf_hooks';
 import require$$5 from 'util/types';
 import require$$4$1 from 'async_hooks';
-import require$$1$3 from 'console';
-import require$$1$4 from 'url';
+import require$$1$2 from 'console';
+import require$$1$3 from 'url';
 import require$$3$1 from 'zlib';
 import require$$6 from 'string_decoder';
-import require$$0$9 from 'diagnostics_channel';
+import require$$0$7 from 'diagnostics_channel';
 import require$$2$2 from 'child_process';
 import require$$6$1 from 'timers';
 import * as fs from 'fs/promises';
@@ -1721,6 +1719,15 @@ function requireTimers () {
 
 var main = {exports: {}};
 
+const require$3 = createRequire(import.meta.url);
+function __require$2() { return require$3("node:stream"); }
+
+const require$2 = createRequire(import.meta.url);
+function __require$1() { return require$2("node:util"); }
+
+const require$1 = createRequire(import.meta.url);
+function __require() { return require$1("node:events"); }
+
 var sbmh;
 var hasRequiredSbmh;
 
@@ -1754,8 +1761,8 @@ function requireSbmh () {
 	 * Based heavily on the Streaming Boyer-Moore-Horspool C++ implementation
 	 * by Hongli Lai at: https://github.com/FooBarWidget/boyer-moore-horspool
 	 */
-	const EventEmitter = require$$0$6.EventEmitter;
-	const inherits = require$$1$2.inherits;
+	const EventEmitter = __require().EventEmitter;
+	const inherits = __require$1().inherits;
 
 	function SBMH (needle) {
 	  if (typeof needle === 'string') {
@@ -1964,8 +1971,8 @@ function requirePartStream () {
 	if (hasRequiredPartStream) return PartStream_1;
 	hasRequiredPartStream = 1;
 
-	const inherits = require$$1$2.inherits;
-	const ReadableStream = require$$0$7.Readable;
+	const inherits = __require$1().inherits;
+	const ReadableStream = __require$2().Readable;
 
 	function PartStream (opts) {
 	  ReadableStream.call(this, opts);
@@ -2009,8 +2016,8 @@ function requireHeaderParser () {
 	if (hasRequiredHeaderParser) return HeaderParser_1;
 	hasRequiredHeaderParser = 1;
 
-	const EventEmitter = require$$0$6.EventEmitter;
-	const inherits = require$$1$2.inherits;
+	const EventEmitter = __require().EventEmitter;
+	const inherits = __require$1().inherits;
 	const getLimit = requireGetLimit();
 
 	const StreamSearch = requireSbmh();
@@ -2117,8 +2124,8 @@ function requireDicer () {
 	if (hasRequiredDicer) return Dicer_1;
 	hasRequiredDicer = 1;
 
-	const WritableStream = require$$0$7.Writable;
-	const inherits = require$$1$2.inherits;
+	const WritableStream = __require$2().Writable;
+	const inherits = __require$1().inherits;
 
 	const StreamSearch = requireSbmh();
 
@@ -2694,8 +2701,8 @@ function requireMultipart () {
 	//  * support limits.fieldNameSize
 	//     -- this will require modifications to utils.parseParams
 
-	const { Readable } = require$$0$7;
-	const { inherits } = require$$1$2;
+	const { Readable } = __require$2();
+	const { inherits } = __require$1();
 
 	const Dicer = requireDicer();
 
@@ -3260,8 +3267,8 @@ function requireMain () {
 	if (hasRequiredMain) return main.exports;
 	hasRequiredMain = 1;
 
-	const WritableStream = require$$0$7.Writable;
-	const { inherits } = require$$1$2;
+	const WritableStream = __require$2().Writable;
+	const { inherits } = __require$1();
 	const Dicer = requireDicer();
 
 	const MultipartParser = requireMultipart();
@@ -3353,7 +3360,7 @@ function requireConstants$3 () {
 	if (hasRequiredConstants$3) return constants$3;
 	hasRequiredConstants$3 = 1;
 
-	const { MessageChannel, receiveMessageOnPort } = require$$0$8;
+	const { MessageChannel, receiveMessageOnPort } = require$$0$6;
 
 	const corsSafeListedMethods = ['GET', 'HEAD', 'POST'];
 	const corsSafeListedMethodsSet = new Set(corsSafeListedMethods);
@@ -14109,7 +14116,7 @@ function requirePendingInterceptorsFormatter () {
 	hasRequiredPendingInterceptorsFormatter = 1;
 
 	const { Transform } = require$$0$5;
-	const { Console } = require$$1$3;
+	const { Console } = require$$1$2;
 
 	/**
 	 * Gets the output of `console.table(…)` as a string.
@@ -14336,7 +14343,7 @@ function requireProxyAgent () {
 	hasRequiredProxyAgent = 1;
 
 	const { kProxy, kClose, kDestroy, kInterceptors } = requireSymbols$4();
-	const { URL } = require$$1$4;
+	const { URL } = require$$1$3;
 	const Agent = requireAgent();
 	const Pool = requirePool();
 	const DispatcherBase = requireDispatcherBase();
@@ -22286,7 +22293,7 @@ function requireEvents () {
 
 	const { webidl } = requireWebidl();
 	const { kEnumerableProperty } = requireUtil$6();
-	const { MessagePort } = require$$0$8;
+	const { MessagePort } = require$$0$6;
 
 	/**
 	 * @see https://html.spec.whatwg.org/multipage/comms.html#messageevent
@@ -22803,7 +22810,7 @@ function requireConnection () {
 	if (hasRequiredConnection) return connection;
 	hasRequiredConnection = 1;
 
-	const diagnosticsChannel = require$$0$9;
+	const diagnosticsChannel = require$$0$7;
 	const { uid, states } = requireConstants();
 	const {
 	  kReadyState,
@@ -23184,7 +23191,7 @@ function requireReceiver () {
 	hasRequiredReceiver = 1;
 
 	const { Writable } = require$$0$5;
-	const diagnosticsChannel = require$$0$9;
+	const diagnosticsChannel = require$$0$7;
 	const { parserStates, opcodes, states, emptyBuffer } = requireConstants();
 	const { kReadyState, kSentClose, kResponse, kReceivedClose } = requireSymbols();
 	const { isValidStatusCode, failWebsocketConnection, websocketMessageReceived } = requireUtil();
@@ -25507,7 +25514,7 @@ function requirePathUtils () {
 	};
 	Object.defineProperty(pathUtils, "__esModule", { value: true });
 	pathUtils.toPlatformPath = pathUtils.toWin32Path = pathUtils.toPosixPath = void 0;
-	const path = __importStar(require$$1$5);
+	const path = __importStar(require$$1$4);
 	/**
 	 * toPosixPath converts the given path to the posix form. On Windows, \\ will be
 	 * replaced with /.
@@ -25594,7 +25601,7 @@ function requireIoUtil () {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = void 0;
 		const fs = __importStar(require$$1);
-		const path = __importStar(require$$1$5);
+		const path = __importStar(require$$1$4);
 		_a = fs.promises
 		// export const {open} = 'fs'
 		, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.open = _a.open, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rm = _a.rm, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
@@ -25784,7 +25791,7 @@ function requireIo () {
 	Object.defineProperty(io, "__esModule", { value: true });
 	io.findInPath = io.which = io.mkdirP = io.rmRF = io.mv = io.cp = void 0;
 	const assert_1 = require$$0$3;
-	const path = __importStar(require$$1$5);
+	const path = __importStar(require$$1$4);
 	const ioUtil = __importStar(requireIoUtil());
 	/**
 	 * Copies a file or folder.
@@ -26092,7 +26099,7 @@ function requireToolrunner () {
 	const os = __importStar(require$$0);
 	const events = __importStar(require$$4);
 	const child = __importStar(require$$2$2);
-	const path = __importStar(require$$1$5);
+	const path = __importStar(require$$1$4);
 	const io = __importStar(requireIo());
 	const ioUtil = __importStar(requireIoUtil());
 	const timers_1 = require$$6$1;
@@ -26936,7 +26943,7 @@ function requireCore () {
 		const file_command_1 = requireFileCommand();
 		const utils_1 = requireUtils$1();
 		const os = __importStar(require$$0);
-		const path = __importStar(require$$1$5);
+		const path = __importStar(require$$1$4);
 		const oidc_utils_1 = requireOidcUtils();
 		/**
 		 * The code to exit an action
@@ -29127,22 +29134,51 @@ class XMLParser{
     }
 }
 
-const OGC_API_PROCESSES_10_CONTAINER_TAG_PARAM = 'ogc-api-processes-container-tag';
-const OGC_API_PROCESSES_10_ECHOPROCESSID_PARAM = 'echoprocessid';
-const OGC_API_PROCESSES_10_TESTS_TO_IGNORE_PARAM = 'ogc-api-processes-ignore';
+const OGC_API_KEYS = {
+    SERVICE_URL: 'service-url',
+    TEAMENGINE_PORT: 'teamengine-port',
+    // processes 1.0
+    PROCESSES: {
+        FLAG: 'ogc-api-processes',
+        CONTAINER_TAG: 'ogc-api-processes-container-tag',
+        ECHOPROCESSID: 'echoprocessid',
+        TESTS_TO_IGNORE: 'ogc-api-processes-ignore',
+    },
+    // features 1.0
+    FEATURES: {
+        FLAG: 'ogc-api-features',
+        CONTAINER_TAG: 'ogc-api-features-container-tag',
+        TESTS_TO_IGNORE: 'ogc-api-features-ignore',
+    },
+};
 function getParams() {
-    const serviceUrl = coreExports.getInput('service-url', {
+    const serviceUrl = coreExports.getInput(OGC_API_KEYS.SERVICE_URL, {
         required: true,
         trimWhitespace: true,
     });
-    const params = { serviceUrl };
-    if (coreExports.getBooleanInput('ogc-api-processes')) {
-        const containerTag = coreExports.getInput(OGC_API_PROCESSES_10_CONTAINER_TAG_PARAM);
-        const echoProcessId = coreExports.getInput(OGC_API_PROCESSES_10_ECHOPROCESSID_PARAM);
-        const testsToIgnore = coreExports.getMultilineInput(OGC_API_PROCESSES_10_TESTS_TO_IGNORE_PARAM, { trimWhitespace: true });
+    // const teamenginePort: number = parseInt(
+    //     core.getInput(OGC_API_KEYS.TEAMENGINE_PORT, {
+    //         trimWhitespace: true,
+    //     }),
+    //     10
+    // );
+    const teamenginePort = 8080; // default port
+    const params = { serviceUrl, teamenginePort };
+    if (coreExports.getBooleanInput(OGC_API_KEYS.PROCESSES.FLAG)) {
+        const containerTag = coreExports.getInput(OGC_API_KEYS.PROCESSES.CONTAINER_TAG);
+        const echoProcessId = coreExports.getInput(OGC_API_KEYS.PROCESSES.ECHOPROCESSID);
+        const testsToIgnore = coreExports.getMultilineInput(OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE, { trimWhitespace: true });
         params.ogcApiProcesses10 = {
             containerTag,
             echoProcessId,
+            testsToIgnore,
+        };
+    }
+    if (coreExports.getBooleanInput(OGC_API_KEYS.FEATURES.FLAG)) {
+        const containerTag = coreExports.getInput(OGC_API_KEYS.FEATURES.CONTAINER_TAG);
+        const testsToIgnore = coreExports.getMultilineInput(OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE, { trimWhitespace: true });
+        params.ogcApiFeatures10 = {
+            containerTag,
             testsToIgnore,
         };
     }
@@ -29150,16 +29186,20 @@ function getParams() {
 }
 function printParams(params) {
     coreExports.info('Using parameters:');
-    coreExports.info(`- service-url: ${params.serviceUrl}`);
+    coreExports.info(`- ${OGC_API_KEYS.SERVICE_URL}: ${params.serviceUrl}`);
+    coreExports.info(`- ${OGC_API_KEYS.TEAMENGINE_PORT}: ${params.teamenginePort}`);
     if (params.ogcApiProcesses10) {
-        coreExports.info(`- ${OGC_API_PROCESSES_10_CONTAINER_TAG_PARAM}: ${params.ogcApiProcesses10.containerTag}`);
-        coreExports.info(`- ${OGC_API_PROCESSES_10_ECHOPROCESSID_PARAM}: ${params.ogcApiProcesses10.echoProcessId}`);
-        coreExports.info(`- ${OGC_API_PROCESSES_10_TESTS_TO_IGNORE_PARAM}: ${params.ogcApiProcesses10.testsToIgnore.join(', ') || '(none)'}`);
+        coreExports.info(`- ${OGC_API_KEYS.PROCESSES.CONTAINER_TAG}: ${params.ogcApiProcesses10.containerTag}`);
+        coreExports.info(`- ${OGC_API_KEYS.PROCESSES.ECHOPROCESSID}: ${params.ogcApiProcesses10.echoProcessId}`);
+        coreExports.info(`- ${OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE}: ${params.ogcApiProcesses10.testsToIgnore.join(', ') || '(none)'}`);
+    }
+    if (params.ogcApiFeatures10) {
+        coreExports.info(`- ${OGC_API_KEYS.FEATURES.CONTAINER_TAG}: ${params.ogcApiFeatures10.containerTag}`);
+        coreExports.info(`- ${OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE}: ${params.ogcApiFeatures10.testsToIgnore.join(', ') || '(none)'}`);
     }
 }
 
 const WAIT_TIMEOUT = 300; // 5 minutes in seconds
-const VALIDATOR_SERVER_URL = 'http://localhost:8080/teamengine';
 /**
  * The main function for the action.
  *
@@ -29170,12 +29210,47 @@ async function run() {
     try {
         const params = getParams();
         printParams(params);
+        const server_url = `http://localhost:${params.teamenginePort}`;
+        const teamengine_url = `${server_url}/teamengine`;
+        await assertServerIsNotResponding(server_url);
+        // Dependencies
+        await assertPodmanExists();
         coreExports.info(`Waiting for ${params.serviceUrl} …`);
         await waitForWebsite(params.serviceUrl, WAIT_TIMEOUT);
         if (params.ogcApiProcesses10) {
             coreExports.startGroup('OGC API - Processes 1.0 Validation');
             coreExports.info('Validating OGC API - Processes …');
-            summaries.push(await validateOGCAPIProcesses10(params.serviceUrl, params.ogcApiProcesses10.containerTag, params.ogcApiProcesses10.echoProcessId, params.ogcApiProcesses10.testsToIgnore));
+            const testRequest = ogcApiProcessesTestRequest(teamengine_url, params.serviceUrl, params.ogcApiProcesses10);
+            const testsToIgnore = params.ogcApiProcesses10.testsToIgnore;
+            const summary = await run_with_container({
+                containerName: 'ets-ogcapi-processes10',
+                containerTag: params.ogcApiProcesses10.containerTag,
+                teamengine_url,
+                validationFn: validateOGCAPI({
+                    testRequest,
+                    testsToIgnore,
+                    xmlFilePath: 'test-results-processes.xml',
+                }),
+            });
+            summaries.push(summary);
+            coreExports.endGroup();
+        }
+        if (params.ogcApiFeatures10) {
+            coreExports.startGroup('OGC API - Features 1.0 Validation');
+            coreExports.info('Validating OGC API - Features …');
+            const testRequest = ogcApiFeaturesTestRequest(teamengine_url, params.serviceUrl, params.ogcApiFeatures10);
+            const testsToIgnore = params.ogcApiFeatures10.testsToIgnore;
+            const summary = await run_with_container({
+                containerName: 'ets-ogcapi-features10',
+                containerTag: params.ogcApiFeatures10.containerTag,
+                teamengine_url,
+                validationFn: validateOGCAPI({
+                    testRequest,
+                    testsToIgnore,
+                    xmlFilePath: 'test-results-features.xml',
+                }),
+            });
+            summaries.push(summary);
             coreExports.endGroup();
         }
         if (!summaries.length) {
@@ -29220,19 +29295,45 @@ async function run() {
     ])
         .write();
 }
-async function validateOGCAPIProcesses10(serviceUrl, containerTag, echoProcessId, ogcApiCoveragesIgnore) {
-    const validatorServerContainerId = (await execExports.getExecOutput('podman', [
-        'run',
-        '--rm',
-        '--detach',
-        '--network',
-        'host',
-        `docker.io/ogccite/ets-ogcapi-processes10:${containerTag}`,
-    ], {
-        silent: true,
+/**
+ * Checks if Podman is installed and available in the system.
+ *
+ * @throws Will throw an error if Podman is not found.
+ */
+async function assertPodmanExists() {
+    try {
+        await execExports.exec('podman', ['--version'], { silent: true });
+        coreExports.info('Podman is installed and available.');
+    }
+    catch (_error) {
+        throw new Error('Podman is not installed or not available in the system PATH. Please install Podman to proceed.');
+    }
+}
+/**
+ * Asserts that localhost:8080 is not responding.
+ *
+ * @throws Will throw an error if localhost:8080 is responding.
+ */
+async function assertServerIsNotResponding(serverUrl) {
+    try {
+        await fetch(serverUrl, {
+            method: 'HEAD',
+        });
+        throw new Error(`Port ${new URL(serverUrl).port} on ${new URL(serverUrl).hostname} is already in use. Please free the port before running the action.`);
+    }
+    catch (_error) {
+        coreExports.info(`Port ${new URL(serverUrl).port} on ${new URL(serverUrl).hostname} is free to use.`);
+    }
+}
+async function run_with_container({ containerName, containerTag, teamengine_url, validationFn, }) {
+    const containerImage = `docker.io/ogccite/${containerName}:${containerTag}`;
+    const validatorServerContainerId = (await execExports.getExecOutput('podman', ['run', '--rm', '--detach', '--network', 'host', containerImage], {
+        silent: coreExports.isDebug() ? false : true,
     })).stdout.trim();
     try {
-        return await _validateOGCAPIProcesses(serviceUrl, echoProcessId, ogcApiCoveragesIgnore);
+        coreExports.info(`Waiting for Team Engine server for image <${containerImage}> …`);
+        await waitForWebsite(teamengine_url, WAIT_TIMEOUT);
+        return await validationFn();
     }
     finally {
         // Stop the validator server
@@ -29242,31 +29343,51 @@ async function validateOGCAPIProcesses10(serviceUrl, containerTag, echoProcessId
         coreExports.info('Stopped Team Engine validator server');
     }
 }
-async function _validateOGCAPIProcesses(serviceUrl, echoProcessId, ogcApiCoveragesIgnore, debugEnabled = false) {
-    coreExports.info(`Waiting for Team Engine server …`);
-    await waitForWebsite(VALIDATOR_SERVER_URL, WAIT_TIMEOUT);
-    coreExports.info(`Running tests …`);
-    const url = `${VALIDATOR_SERVER_URL}/rest/suites/ogcapi-processes-1.0/run?` +
+function ogcApiProcessesTestRequest(teamengine_url, serviceUrl, params) {
+    const url = `${teamengine_url}/rest/suites/ogcapi-processes-1.0/run?` +
         new URLSearchParams({
             iut: serviceUrl,
-            echoprocessid: echoProcessId,
+            echoprocessid: params.echoProcessId,
         }).toString();
     coreExports.info(`Using test URL: ${url}`);
-    const testRequest = new Request(url, {
+    return new Request(url, {
         method: 'GET',
         headers: {
             Accept: 'application/xml', // delivers TestNG XML
             Authorization: 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
         },
     });
+}
+function ogcApiFeaturesTestRequest(teamengine_url, serviceUrl, _params) {
+    const url = `${teamengine_url}/rest/suites/ogcapi-features-1.0/run?` +
+        new URLSearchParams({
+            iut: serviceUrl,
+        }).toString();
+    coreExports.info(`Using test URL: ${url}`);
+    return new Request(url, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/xml', // delivers TestNG XML
+            Authorization: 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
+        },
+    });
+}
+function validateOGCAPI({ testRequest, testsToIgnore, xmlFilePath, }) {
+    return () => _validateOGCAPI({
+        testRequest,
+        testsToIgnore,
+        xmlFilePath,
+    });
+}
+async function _validateOGCAPI({ testRequest, testsToIgnore, xmlFilePath, }) {
+    coreExports.info(`Running tests using URL <${testRequest.url}> …`);
     const testResult = await fetch(testRequest);
     if (!testResult.ok) {
-        throw new Error(`Failed to run OGC API - Processes tests: ${testResult.status} ${testResult.statusText}`);
+        throw new Error(`Failed to run OGC API tests: ${testResult.status} ${testResult.statusText}`);
     }
     const testResultXml = await testResult.text();
-    if (debugEnabled) {
-        const filePath = 'test-results-processes.xml';
-        await fs.writeFile(filePath, testResultXml, { encoding: 'utf8' });
+    if (coreExports.isDebug()) {
+        await fs.writeFile(xmlFilePath, testResultXml, { encoding: 'utf8' });
     }
     const { suite, results } = await extractResults(testResultXml);
     const total = results.length;
@@ -29285,7 +29406,7 @@ async function _validateOGCAPIProcesses(serviceUrl, echoProcessId, ogcApiCoverag
             printAttributes(result.attributes);
         }
         if (result.status === 'FAIL') {
-            const isIgnored = ogcApiCoveragesIgnore.includes(result.name);
+            const isIgnored = testsToIgnore.includes(result.name);
             const indicator = isIgnored ? 'IGNORED' : 'FAILED';
             ignored += isIgnored ? 1 : 0;
             coreExports.error(`${message} (${indicator})`, {

@@ -23,15 +23,26 @@ steps:
               foobar
 ```
 
+> [!NOTE]
+>
+> TeamEngine is run using Podman inside the action and uses port `8080`. Ensure
+> that the GitHub Actions runner has Podman installed and configured correctly.
+> Moreover, the action assumes that the TeamEngine container can bind to port
+> `8080`. If this port is already in use on the runner, the action will fail.
+> You may need to stop other services or containers that are using this port.
+
 ### Inputs
 
-| Name                              | Description                                                                      | Required | Default                    |
-| --------------------------------- | -------------------------------------------------------------------------------- | -------- | -------------------------- |
-| `service-url`                     | URL of the OGC endpoint to validate                                              | `true`   | `http://localhost:8484/`   |
-| `ogc-api-processes`               | If set, validate OGC API - Processes                                             | `false`  | `false`                    |
-| `ogc-api-processes-container-tag` | Container tag to use for OGC API - Processes 1.0 validation                      | `false`  | `1.3-teamengine-6.0.0-RC2` |
-| `echoprocessid`                   | The process identifier to run for OGC API - Processes validation                 | `false`  | `echo`                     |
-| `ogc-api-processes-ignore`        | Multi-line list of test identifiers to ignore for OGC API - Processes validation | `false`  | `''`                       |
+| Name                              | Description                                                                      | Required | Default                      |
+| --------------------------------- | -------------------------------------------------------------------------------- | -------- | ---------------------------- |
+| `service-url`                     | URL of the OGC endpoint to validate                                              | `true`   | `http://localhost:8484/`     |
+| `ogc-api-processes`               | If set, validate OGC API - Processes                                             | `false`  | `false`                      |
+| `ogc-api-processes-container-tag` | Container tag to use for OGC API - Processes 1.0 validation                      | `false`  | `1.3-teamengine-6.0.0-RC2`   |
+| `echoprocessid`                   | The process identifier to run for OGC API - Processes validation                 | `false`  | `echo`                       |
+| `ogc-api-processes-ignore`        | Multi-line list of test identifiers to ignore for OGC API - Processes validation | `false`  | `''`                         |
+| `ogc-api-features`                | If set, validate OGC API - Features                                              | `false`  | `false`                      |
+| `ogc-api-features-container-tag`  | Container tag to use for OGC API - Features 1.0 validation                       | `false`  | `1.1.9-teamengine-6.0.0-RC2` |
+| `ogc-api-features-ignore`         | Multi-line list of test identifiers to ignore for OGC API - Features validation  | `false`  | `''`                         |
 
 ## Testing with `@github/local-action`
 

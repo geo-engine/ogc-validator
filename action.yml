@@ -9,6 +9,9 @@ branding:
 
 # Define your inputs here.
 inputs:
+    # teamengine-port:
+    #     description: Port on which TeamEngine will run
+    #     default: '8080'
     service-url:
         description: URL of the OGC endpoint to validate
         required: true
@@ -27,6 +30,17 @@ inputs:
         description:
             Multi-line list of test identifiers to ignore for OGC API -
             Processes validation
+        default: ''
+    ogc-api-features:
+        description: If set, validate OGC API - Features
+        default: false
+    ogc-api-features-container-tag:
+        description: Container tag to use for OGC API - Features 1.0 validation
+        default: '1.9-teamengine-6.0.0-RC2'
+    ogc-api-features-ignore:
+        description:
+            Multi-line list of test identifiers to ignore for OGC API - Features
+            validation
         default: ''
 
 # Define your outputs here.
