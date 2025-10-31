@@ -215,7 +215,6 @@ export function ogcApiProcessesTestRequest(
             iut: serviceUrl,
             echoprocessid: params.echoProcessId,
         }).toString();
-    core.info(`Using test URL: ${url}`);
     return new Request(url, {
         method: 'GET',
         headers: {
@@ -236,7 +235,6 @@ export function ogcApiFeaturesTestRequest(
         new URLSearchParams({
             iut: serviceUrl,
         }).toString();
-    core.info(`Using test URL: ${url}`);
     return new Request(url, {
         method: 'GET',
         headers: {

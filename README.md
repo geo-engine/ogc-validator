@@ -1,10 +1,6 @@
 # OGC API Validator GitHub Action
 
-<!-- [![GitHub Super-Linter](https://github.com/actions/typescript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
-![CI](https://github.com/actions/typescript-action/actions/workflows/ci.yml/badge.svg)
-[![Check dist/](https://github.com/actions/typescript-action/actions/workflows/check-dist.yml/badge.svg)](https://github.com/actions/typescript-action/actions/workflows/check-dist.yml)
-[![CodeQL](https://github.com/actions/typescript-action/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/actions/typescript-action/actions/workflows/codeql-analysis.yml)
-[![Coverage](./badges/coverage.svg)](./badges/coverage.svg) -->
+[![CI](https://github.com/geo-engine/ogc-validator/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/geo-engine/ogc-validator/actions/workflows/ci.yml?branch=main)
 
 This GitHub Action automates the process of validating an OGC API implementation
 using the OGC CITE validator, e.g., OGC API Processes.

@@ -29349,7 +29349,6 @@ function ogcApiProcessesTestRequest(teamengine_url, serviceUrl, params) {
             iut: serviceUrl,
             echoprocessid: params.echoProcessId,
         }).toString();
-    coreExports.info(`Using test URL: ${url}`);
     return new Request(url, {
         method: 'GET',
         headers: {
@@ -29363,7 +29362,6 @@ function ogcApiFeaturesTestRequest(teamengine_url, serviceUrl, _params) {
         new URLSearchParams({
             iut: serviceUrl,
         }).toString();
-    coreExports.info(`Using test URL: ${url}`);
     return new Request(url, {
         method: 'GET',
         headers: {
