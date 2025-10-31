@@ -8,12 +8,13 @@
 import { jest } from '@jest/globals';
 import * as core from '../__fixtures__/core.js';
 import { waitForWebsite } from '../__fixtures__/wait.js';
+import { ogcApiProcessesTestRequest } from '../src/main.js';
 
 // Mocks should be declared before the module being tested is imported.
 jest.unstable_mockModule('@actions/core', () => core);
 jest.unstable_mockModule('../src/wait.js', () => ({ waitForWebsite }));
 
-const { _validateOGCAPIProcesses } = await import('../src/main.js');
+const { _validateOGCAPI } = await import('../src/main.js');
 
 describe('main.ts', () => {
     beforeEach(() => {
@@ -80,14 +81,30 @@ describe('main.ts', () => {
             } as unknown as Response;
         });
 
-        const result = await _validateOGCAPIProcesses(
+        const params = {
+            serviceUrl: mockServiceUrl,
+            teamenginePort: 8080,
+            ogcApiProcesses10: {
+                containerTag: 'latest',
+                echoProcessId: mockEchoProcessId,
+                testsToIgnore: mockIgnoreList,
+            },
+        };
+
+        const testRequest = ogcApiProcessesTestRequest(
             mockServiceUrl,
             mockEchoProcessId,
-            mockIgnoreList
+            params.ogcApiProcesses10
         );
 
+        const result = await _validateOGCAPI({
+            testRequest,
+            testsToIgnore: mockIgnoreList,
+            xmlFilePath: '',
+        });
+
         expect(result).toEqual({
-            name: 'OGC API - Processes',
+            name: 'Suite1',
             success: true,
             passed: 1,
             skipped: 1,
