@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { waitForWebsite } from './wait.js';
 import { exec, getExecOutput } from '@actions/exec';
-import { XMLParser } from 'fast-xml-parser';
+import { JPathOrMatcher, XMLParser } from 'fast-xml-parser';
 import * as fs from 'fs/promises';
 import {
     getParams,
@@ -479,7 +479,7 @@ async function extractResults(xml: string): Promise<ExtractionResult> {
     const parser = new XMLParser({
         ignoreAttributes: false,
         attributeNamePrefix: '',
-        isArray: (name: string, _jpath: string) => {
+        isArray: (name: string, _jpath: JPathOrMatcher): boolean => {
             return [
                 'suite',
                 'test',
