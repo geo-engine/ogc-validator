@@ -29137,6 +29137,12 @@ class XMLParser{
 const OGC_API_KEYS = {
     SERVICE_URL: 'service-url',
     TEAMENGINE_PORT: 'teamengine-port',
+    // common 1.0
+    COMMON: {
+        FLAG: 'ogc-api-common',
+        CONTAINER_TAG: 'ogc-api-common-container-tag',
+        TESTS_TO_IGNORE: 'ogc-api-common-ignore',
+    },
     // processes 1.0
     PROCESSES: {
         FLAG: 'ogc-api-processes',
@@ -29149,6 +29155,12 @@ const OGC_API_KEYS = {
         FLAG: 'ogc-api-features',
         CONTAINER_TAG: 'ogc-api-features-container-tag',
         TESTS_TO_IGNORE: 'ogc-api-features-ignore',
+    },
+    // tiles 1.0
+    TILES: {
+        FLAG: 'ogc-api-tiles',
+        CONTAINER_TAG: 'ogc-api-tiles-container-tag',
+        TESTS_TO_IGNORE: 'ogc-api-tiles-ignore',
     },
 };
 function getParams() {
@@ -29164,38 +29176,155 @@ function getParams() {
     // );
     const teamenginePort = 8080; // default port
     const params = { serviceUrl, teamenginePort };
-    if (coreExports.getBooleanInput(OGC_API_KEYS.PROCESSES.FLAG)) {
-        const containerTag = coreExports.getInput(OGC_API_KEYS.PROCESSES.CONTAINER_TAG);
-        const echoProcessId = coreExports.getInput(OGC_API_KEYS.PROCESSES.ECHOPROCESSID);
-        const testsToIgnore = coreExports.getMultilineInput(OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE, { trimWhitespace: true });
-        params.ogcApiProcesses10 = {
-            containerTag,
-            echoProcessId,
-            testsToIgnore,
-        };
-    }
-    if (coreExports.getBooleanInput(OGC_API_KEYS.FEATURES.FLAG)) {
-        const containerTag = coreExports.getInput(OGC_API_KEYS.FEATURES.CONTAINER_TAG);
-        const testsToIgnore = coreExports.getMultilineInput(OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE, { trimWhitespace: true });
-        params.ogcApiFeatures10 = {
-            containerTag,
-            testsToIgnore,
-        };
-    }
+    const ogcApiCommon10 = OgcApiCommon10Params.fromInput();
+    const ogcApiProcesses10 = OgcApiProcesses10Params.fromInput();
+    const ogcApiFeatures10 = OgcApiFeatures10Params.fromInput();
+    const ogcApiTiles10 = OgcApiTiles10Params.fromInput();
+    if (ogcApiCommon10)
+        params.ogcApiCommon10 = ogcApiCommon10;
+    if (ogcApiProcesses10)
+        params.ogcApiProcesses10 = ogcApiProcesses10;
+    if (ogcApiFeatures10)
+        params.ogcApiFeatures10 = ogcApiFeatures10;
+    if (ogcApiTiles10)
+        params.ogcApiTiles10 = ogcApiTiles10;
     return params;
 }
 function printParams(params) {
     coreExports.info('Using parameters:');
     coreExports.info(`- ${OGC_API_KEYS.SERVICE_URL}: ${params.serviceUrl}`);
     coreExports.info(`- ${OGC_API_KEYS.TEAMENGINE_PORT}: ${params.teamenginePort}`);
-    if (params.ogcApiProcesses10) {
-        coreExports.info(`- ${OGC_API_KEYS.PROCESSES.CONTAINER_TAG}: ${params.ogcApiProcesses10.containerTag}`);
-        coreExports.info(`- ${OGC_API_KEYS.PROCESSES.ECHOPROCESSID}: ${params.ogcApiProcesses10.echoProcessId}`);
-        coreExports.info(`- ${OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE}: ${params.ogcApiProcesses10.testsToIgnore.join(', ') || '(none)'}`);
+    for (const apiParams of [
+        ...(params.ogcApiCommon10?.printParams() ?? []),
+        ...(params.ogcApiProcesses10?.printParams() ?? []),
+        ...(params.ogcApiFeatures10?.printParams() ?? []),
+        ...(params.ogcApiTiles10?.printParams() ?? []),
+    ]) {
+        coreExports.info(`- ${apiParams.key}: ${apiParams.value}`);
     }
-    if (params.ogcApiFeatures10) {
-        coreExports.info(`- ${OGC_API_KEYS.FEATURES.CONTAINER_TAG}: ${params.ogcApiFeatures10.containerTag}`);
-        coreExports.info(`- ${OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE}: ${params.ogcApiFeatures10.testsToIgnore.join(', ') || '(none)'}`);
+}
+class OgcApiParams {
+    static fromInput() {
+        throw new Error('Not implemented');
+    }
+}
+class OgcApiCommon10Params extends OgcApiParams {
+    containerTag;
+    testsToIgnore;
+    constructor(containerTag, testsToIgnore) {
+        super();
+        this.containerTag = containerTag;
+        this.testsToIgnore = testsToIgnore;
+    }
+    static fromInput() {
+        if (!coreExports.getBooleanInput(OGC_API_KEYS.COMMON.FLAG))
+            return undefined;
+        const containerTag = coreExports.getInput(OGC_API_KEYS.COMMON.CONTAINER_TAG);
+        const testsToIgnore = coreExports.getMultilineInput(OGC_API_KEYS.COMMON.TESTS_TO_IGNORE, { trimWhitespace: true });
+        return new OgcApiCommon10Params(containerTag, testsToIgnore);
+    }
+    printParams() {
+        return [
+            {
+                key: OGC_API_KEYS.COMMON.CONTAINER_TAG,
+                value: this.containerTag,
+            },
+            {
+                key: OGC_API_KEYS.COMMON.TESTS_TO_IGNORE,
+                value: this.testsToIgnore.join(', ') || '(none)',
+            },
+        ];
+    }
+}
+class OgcApiProcesses10Params extends OgcApiParams {
+    containerTag;
+    echoProcessId;
+    testsToIgnore;
+    constructor(containerTag, echoProcessId, testsToIgnore) {
+        super();
+        this.containerTag = containerTag;
+        this.echoProcessId = echoProcessId;
+        this.testsToIgnore = testsToIgnore;
+    }
+    static fromInput() {
+        if (!coreExports.getBooleanInput(OGC_API_KEYS.PROCESSES.FLAG))
+            return undefined;
+        const containerTag = coreExports.getInput(OGC_API_KEYS.PROCESSES.CONTAINER_TAG);
+        const echoProcessId = coreExports.getInput(OGC_API_KEYS.PROCESSES.ECHOPROCESSID);
+        const testsToIgnore = coreExports.getMultilineInput(OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE, { trimWhitespace: true });
+        return new OgcApiProcesses10Params(containerTag, echoProcessId, testsToIgnore);
+    }
+    printParams() {
+        return [
+            {
+                key: OGC_API_KEYS.PROCESSES.CONTAINER_TAG,
+                value: this.containerTag,
+            },
+            {
+                key: OGC_API_KEYS.PROCESSES.ECHOPROCESSID,
+                value: this.echoProcessId,
+            },
+            {
+                key: OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE,
+                value: this.testsToIgnore.join(', ') || '(none)',
+            },
+        ];
+    }
+}
+class OgcApiFeatures10Params extends OgcApiParams {
+    containerTag;
+    testsToIgnore;
+    constructor(containerTag, testsToIgnore) {
+        super();
+        this.containerTag = containerTag;
+        this.testsToIgnore = testsToIgnore;
+    }
+    static fromInput() {
+        if (!coreExports.getBooleanInput(OGC_API_KEYS.FEATURES.FLAG))
+            return undefined;
+        const containerTag = coreExports.getInput(OGC_API_KEYS.FEATURES.CONTAINER_TAG);
+        const testsToIgnore = coreExports.getMultilineInput(OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE, { trimWhitespace: true });
+        return new OgcApiFeatures10Params(containerTag, testsToIgnore);
+    }
+    printParams() {
+        return [
+            {
+                key: OGC_API_KEYS.FEATURES.CONTAINER_TAG,
+                value: this.containerTag,
+            },
+            {
+                key: OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE,
+                value: this.testsToIgnore.join(', ') || '(none)',
+            },
+        ];
+    }
+}
+class OgcApiTiles10Params extends OgcApiParams {
+    containerTag;
+    testsToIgnore;
+    constructor(containerTag, testsToIgnore) {
+        super();
+        this.containerTag = containerTag;
+        this.testsToIgnore = testsToIgnore;
+    }
+    static fromInput() {
+        if (!coreExports.getBooleanInput(OGC_API_KEYS.TILES.FLAG))
+            return undefined;
+        const containerTag = coreExports.getInput(OGC_API_KEYS.TILES.CONTAINER_TAG);
+        const testsToIgnore = coreExports.getMultilineInput(OGC_API_KEYS.TILES.TESTS_TO_IGNORE, { trimWhitespace: true });
+        return new OgcApiTiles10Params(containerTag, testsToIgnore);
+    }
+    printParams() {
+        return [
+            {
+                key: OGC_API_KEYS.TILES.CONTAINER_TAG,
+                value: this.containerTag,
+            },
+            {
+                key: OGC_API_KEYS.TILES.TESTS_TO_IGNORE,
+                value: this.testsToIgnore.join(', ') || '(none)',
+            },
+        ];
     }
 }
 
@@ -29217,6 +29346,24 @@ async function run() {
         await assertPodmanExists();
         coreExports.info(`Waiting for ${params.serviceUrl} …`);
         await waitForWebsite(params.serviceUrl, WAIT_TIMEOUT);
+        if (params.ogcApiCommon10) {
+            coreExports.startGroup('OGC API - Common 1.0 Validation');
+            coreExports.info('Validating OGC API - Common …');
+            const testRequest = ogcApiCommonTestRequest(teamengine_url, params.serviceUrl, params.ogcApiCommon10);
+            const testsToIgnore = params.ogcApiCommon10.testsToIgnore;
+            const summary = await run_with_container({
+                containerName: 'ets-ogcapi-common10',
+                containerTag: params.ogcApiCommon10.containerTag,
+                teamengine_url,
+                validationFn: validateOGCAPI({
+                    testRequest,
+                    testsToIgnore,
+                    xmlFilePath: 'test-results-common.xml',
+                }),
+            });
+            summaries.push(summary);
+            coreExports.endGroup();
+        }
         if (params.ogcApiProcesses10) {
             coreExports.startGroup('OGC API - Processes 1.0 Validation');
             coreExports.info('Validating OGC API - Processes …');
@@ -29248,6 +29395,24 @@ async function run() {
                     testRequest,
                     testsToIgnore,
                     xmlFilePath: 'test-results-features.xml',
+                }),
+            });
+            summaries.push(summary);
+            coreExports.endGroup();
+        }
+        if (params.ogcApiTiles10) {
+            coreExports.startGroup('OGC API - Tiles 1.0 Validation');
+            coreExports.info('Validating OGC API - Tiles …');
+            const testRequest = ogcApiTilesTestRequest(teamengine_url, params.serviceUrl, params.ogcApiTiles10);
+            const testsToIgnore = params.ogcApiTiles10.testsToIgnore;
+            const summary = await run_with_container({
+                containerName: 'ets-ogcapi-tiles10',
+                containerTag: params.ogcApiTiles10.containerTag,
+                teamengine_url,
+                validationFn: validateOGCAPI({
+                    testRequest,
+                    testsToIgnore,
+                    xmlFilePath: 'test-results-tiles.xml',
                 }),
             });
             summaries.push(summary);
@@ -29343,6 +29508,19 @@ async function run_with_container({ containerName, containerTag, teamengine_url,
         coreExports.info('Stopped Team Engine validator server');
     }
 }
+function ogcApiCommonTestRequest(teamengine_url, serviceUrl, _params) {
+    const url = `${teamengine_url}/rest/suites/ogcapi-common-1.0/run?` +
+        new URLSearchParams({
+            iut: serviceUrl,
+        }).toString();
+    return new Request(url, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/xml', // delivers TestNG XML; alternatively, application/json could be used for JSON output
+            Authorization: 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
+        },
+    });
+}
 function ogcApiProcessesTestRequest(teamengine_url, serviceUrl, params) {
     const url = `${teamengine_url}/rest/suites/ogcapi-processes-1.0/run?` +
         new URLSearchParams({
@@ -29366,6 +29544,19 @@ function ogcApiFeaturesTestRequest(teamengine_url, serviceUrl, _params) {
         method: 'GET',
         headers: {
             Accept: 'application/xml', // delivers TestNG XML
+            Authorization: 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
+        },
+    });
+}
+function ogcApiTilesTestRequest(teamengine_url, serviceUrl, _params) {
+    const url = `${teamengine_url}/rest/suites/ogcapi-tiles-1.0/run?` +
+        new URLSearchParams({
+            iut: serviceUrl,
+        }).toString();
+    return new Request(url, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/xml', // delivers TestNG XML; alternatively, application/json could be used for JSON output
             Authorization: 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
         },
     });

@@ -16,6 +16,17 @@ inputs:
         description: URL of the OGC endpoint to validate
         required: true
         default: http://localhost:8484/
+    ogc-api-common:
+        description: If set, validate OGC API - Common
+        default: false
+    ogc-api-common-container-tag:
+        description: Container tag to use for OGC API - Common validation
+        default: '1.0-teamengine-6.0.0-RC2'
+    ogc-api-common-ignore:
+        description:
+            Multi-line list of test identifiers to ignore for OGC API - Common
+            validation
+        default: ''
     ogc-api-processes:
         description: If set, validate OGC API - Processes
         default: false
@@ -40,6 +51,17 @@ inputs:
     ogc-api-features-ignore:
         description:
             Multi-line list of test identifiers to ignore for OGC API - Features
+            validation
+        default: ''
+    ogc-api-tiles:
+        description: If set, validate OGC API - Tiles
+        default: false
+    ogc-api-tiles-container-tag:
+        description: Container tag to use for OGC API - Tiles 1.0 validation
+        default: '1.2-teamengine-6.0.0-RC2'
+    ogc-api-tiles-ignore:
+        description:
+            Multi-line list of test identifiers to ignore for OGC API - Tiles
             validation
         default: ''
 

@@ -5,8 +5,10 @@ import { XMLParser } from 'fast-xml-parser';
 import * as fs from 'fs/promises';
 import {
     getParams,
+    OgcApiCommon10Params,
     OgcApiFeatures10Params,
     OgcApiProcesses10Params,
+    OgcApiTiles10Params,
     printParams,
 } from './params.js';
 
@@ -33,6 +35,31 @@ export async function run(): Promise<void> {
 
         core.info(`Waiting for ${params.serviceUrl} …`);
         await waitForWebsite(params.serviceUrl, WAIT_TIMEOUT);
+
+        if (params.ogcApiCommon10) {
+            core.startGroup('OGC API - Common 1.0 Validation');
+            core.info('Validating OGC API - Common …');
+
+            const testRequest = ogcApiCommonTestRequest(
+                teamengine_url,
+                params.serviceUrl,
+                params.ogcApiCommon10
+            );
+            const testsToIgnore = params.ogcApiCommon10.testsToIgnore;
+            const summary = await run_with_container({
+                containerName: 'ets-ogcapi-common10',
+                containerTag: params.ogcApiCommon10.containerTag,
+                teamengine_url,
+                validationFn: validateOGCAPI({
+                    testRequest,
+                    testsToIgnore,
+                    xmlFilePath: 'test-results-common.xml',
+                }),
+            });
+            summaries.push(summary);
+
+            core.endGroup();
+        }
 
         if (params.ogcApiProcesses10) {
             core.startGroup('OGC API - Processes 1.0 Validation');
@@ -77,6 +104,31 @@ export async function run(): Promise<void> {
                     testRequest,
                     testsToIgnore,
                     xmlFilePath: 'test-results-features.xml',
+                }),
+            });
+            summaries.push(summary);
+
+            core.endGroup();
+        }
+
+        if (params.ogcApiTiles10) {
+            core.startGroup('OGC API - Tiles 1.0 Validation');
+            core.info('Validating OGC API - Tiles …');
+
+            const testRequest = ogcApiTilesTestRequest(
+                teamengine_url,
+                params.serviceUrl,
+                params.ogcApiTiles10
+            );
+            const testsToIgnore = params.ogcApiTiles10.testsToIgnore;
+            const summary = await run_with_container({
+                containerName: 'ets-ogcapi-tiles10',
+                containerTag: params.ogcApiTiles10.containerTag,
+                teamengine_url,
+                validationFn: validateOGCAPI({
+                    testRequest,
+                    testsToIgnore,
+                    xmlFilePath: 'test-results-tiles.xml',
                 }),
             });
             summaries.push(summary);
@@ -204,6 +256,26 @@ async function run_with_container({
     }
 }
 
+export function ogcApiCommonTestRequest(
+    teamengine_url: string,
+    serviceUrl: string,
+    _params: OgcApiCommon10Params
+): Request {
+    const url =
+        `${teamengine_url}/rest/suites/ogcapi-common-1.0/run?` +
+        new URLSearchParams({
+            iut: serviceUrl,
+        }).toString();
+    return new Request(url, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/xml', // delivers TestNG XML; alternatively, application/json could be used for JSON output
+            Authorization:
+                'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
+        },
+    });
+}
+
 export function ogcApiProcessesTestRequest(
     teamengine_url: string,
     serviceUrl: string,
@@ -239,6 +311,26 @@ export function ogcApiFeaturesTestRequest(
         method: 'GET',
         headers: {
             Accept: 'application/xml', // delivers TestNG XML
+            Authorization:
+                'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
+        },
+    });
+}
+
+export function ogcApiTilesTestRequest(
+    teamengine_url: string,
+    serviceUrl: string,
+    _params: OgcApiTiles10Params
+): Request {
+    const url =
+        `${teamengine_url}/rest/suites/ogcapi-tiles-1.0/run?` +
+        new URLSearchParams({
+            iut: serviceUrl,
+        }).toString();
+    return new Request(url, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/xml', // delivers TestNG XML; alternatively, application/json could be used for JSON output
             Authorization:
                 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
         },

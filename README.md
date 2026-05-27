@@ -32,6 +32,9 @@ steps:
 | Name                              | Description                                                                      | Required | Default                      |
 | --------------------------------- | -------------------------------------------------------------------------------- | -------- | ---------------------------- |
 | `service-url`                     | URL of the OGC endpoint to validate                                              | `true`   | `http://localhost:8484/`     |
+| `ogc-api-common`                  | If set, validate OGC API - Common                                                | `false`  | `false`                      |
+| `ogc-api-common-container-tag`    | Container tag to use for OGC API - Common validation                             | `false`  | `1.0-teamengine-6.0.0-RC2`   |
+| `ogc-api-common-ignore`           | Multi-line list of test identifiers to ignore for OGC API - Common validation    | `false`  | `''`                         |
 | `ogc-api-processes`               | If set, validate OGC API - Processes                                             | `false`  | `false`                      |
 | `ogc-api-processes-container-tag` | Container tag to use for OGC API - Processes 1.0 validation                      | `false`  | `1.3-teamengine-6.0.0-RC2`   |
 | `echoprocessid`                   | The process identifier to run for OGC API - Processes validation                 | `false`  | `echo`                       |
@@ -39,6 +42,9 @@ steps:
 | `ogc-api-features`                | If set, validate OGC API - Features                                              | `false`  | `false`                      |
 | `ogc-api-features-container-tag`  | Container tag to use for OGC API - Features 1.0 validation                       | `false`  | `1.1.9-teamengine-6.0.0-RC2` |
 | `ogc-api-features-ignore`         | Multi-line list of test identifiers to ignore for OGC API - Features validation  | `false`  | `''`                         |
+| `ogc-api-tiles`                   | If set, validate OGC API - Tiles                                                 | `false`  | `false`                      |
+| `ogc-api-tiles-container-tag`     | Container tag to use for OGC API - Tiles 1.0 validation                          | `false`  | `1.0-teamengine-6.0.0-RC2`   |
+| `ogc-api-tiles-ignore`            | Multi-line list of test identifiers to ignore for OGC API - Tiles validation     | `false`  | `''`                         |
 
 ## Testing with `@github/local-action`
 

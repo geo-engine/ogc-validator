@@ -4,8 +4,15 @@ import { InputOptions } from '@actions/core';
 
 jest.unstable_mockModule('@actions/core', () => core);
 
-// impot dynamically to ensure mocks are used
-const { getParams, printParams } = await import('../src/params.js');
+// import dynamically to ensure mocks are used
+const {
+    getParams,
+    printParams,
+    OgcApiCommon10Params,
+    OgcApiProcesses10Params,
+    OgcApiFeatures10Params,
+    OgcApiTiles10Params,
+} = await import('../src/params.js');
 
 describe('getParams', () => {
     beforeEach(() => {
@@ -56,15 +63,19 @@ describe('getParams', () => {
         expect(params).toEqual({
             serviceUrl: 'https://example.com',
             teamenginePort: 8080,
-            ogcApiProcesses10: {
-                containerTag: '1.0.0',
-                echoProcessId: 'echo-id',
-                testsToIgnore: ['ignore1', 'ignore2'],
-            },
-            ogcApiFeatures10: {
-                containerTag: '',
-                testsToIgnore: ['ignore1', 'ignore2'],
-            },
+            ogcApiCommon10: new OgcApiCommon10Params('', [
+                'ignore1',
+                'ignore2',
+            ]),
+            ogcApiProcesses10: new OgcApiProcesses10Params('1.0.0', 'echo-id', [
+                'ignore1',
+                'ignore2',
+            ]),
+            ogcApiFeatures10: new OgcApiFeatures10Params('', [
+                'ignore1',
+                'ignore2',
+            ]),
+            ogcApiTiles10: new OgcApiTiles10Params('', ['ignore1', 'ignore2']),
         });
     });
 });
@@ -93,11 +104,10 @@ describe('printParams', () => {
         const params = {
             serviceUrl: 'https://example.com',
             teamenginePort: 8080,
-            ogcApiProcesses10: {
-                containerTag: '1.0.0',
-                echoProcessId: 'echo-id',
-                testsToIgnore: ['ignore1', 'ignore2'],
-            },
+            ogcApiProcesses10: new OgcApiProcesses10Params('1.0.0', 'echo-id', [
+                'ignore1',
+                'ignore2',
+            ]),
         };
 
         printParams(params);
@@ -119,11 +129,11 @@ describe('printParams', () => {
         const params = {
             serviceUrl: 'https://example.com',
             teamenginePort: 8080,
-            ogcApiProcesses10: {
-                containerTag: '1.0.0',
-                echoProcessId: 'echo-id',
-                testsToIgnore: [],
-            },
+            ogcApiProcesses10: new OgcApiProcesses10Params(
+                '1.0.0',
+                'echo-id',
+                []
+            ),
         };
 
         printParams(params);
