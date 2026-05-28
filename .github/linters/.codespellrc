@@ -1,3 +1,0 @@
-[codespell]
-skip = .licenses/*,node_modules/*,dist/*
-ignore-words-list = TestNG,testng
