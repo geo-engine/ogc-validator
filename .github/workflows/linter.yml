@@ -23,6 +23,18 @@ jobs:
         name: Lint Codebase
         runs-on: ubuntu-latest
 
+        permissions:
+            # contents permission to clone the repository
+            contents: read
+            packages: read
+            # issues and pull-requests permissions to write results as pull
+            # request comments. Omit them if you don't need summary comments
+            issues: write
+            pull-requests: write
+            # To report GitHub Actions status checks. Omit if you don't need
+            # to update commit status
+            statuses: write
+
         steps:
             - name: Checkout
               id: checkout
@@ -43,7 +55,7 @@ jobs:
 
             - name: Lint Codebase
               id: super-linter
-              uses: super-linter/super-linter/slim@v8.2.0
+              uses: super-linter/super-linter/slim@v8.6.0
               env:
                   DEFAULT_BRANCH: main
                   FILTER_REGEX_EXCLUDE: dist/**/*
@@ -55,5 +67,6 @@ jobs:
                   VALIDATE_GITHUB_ACTIONS_ZIZMOR: false
                   VALIDATE_JAVASCRIPT_ES: false
                   VALIDATE_JSCPD: false
-                  VALIDATE_TYPESCRIPT_ES: false
                   VALIDATE_JSON: false
+                  VALIDATE_SPELL_CODESPELL: false
+                  VALIDATE_TYPESCRIPT_ES: false
