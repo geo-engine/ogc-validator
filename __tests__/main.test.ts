@@ -18,8 +18,8 @@ const mockWaitForWebsite = jest.fn();
 const mockGetParams = jest.fn();
 const mockPrintParams = jest.fn();
 const mockWriteFile = jest.fn();
-const mockGroup = jest.fn(async (_name: string, callback: () => Promise<unknown>) =>
-    callback()
+const mockGroup = jest.fn(
+    async (_name: string, callback: () => Promise<unknown>) => callback()
 );
 const mockIsDebug = jest.fn(() => false);
 const mockSummary = {
@@ -66,9 +66,9 @@ describe('main.ts', () => {
             services: [],
         });
 
-        global.fetch = jest.fn<typeof fetch>().mockRejectedValue(
-            new Error('Connection refused')
-        );
+        global.fetch = jest
+            .fn<typeof fetch>()
+            .mockRejectedValue(new Error('Connection refused'));
     });
 
     it('Validates OGC API Processes successfully', async () => {
@@ -130,10 +130,7 @@ describe('main.ts', () => {
         const testRequest = new OgcApiProcesses10Service(
             mockEchoProcessId,
             mockIgnoreList
-        ).request(
-            'http://localhost:8080/teamengine',
-            mockServiceUrl
-        );
+        ).request('http://localhost:8080/teamengine', mockServiceUrl);
 
         const result = await validateOGCAPI({
             testRequest,
@@ -286,9 +283,13 @@ describe('main.ts', () => {
             'OGC API - Validation Summary'
         );
         expect(mockSummary.write).toHaveBeenCalled();
-        expect(mockExec).toHaveBeenCalledWith('podman', ['stop', 'container-id'], {
-            silent: true,
-        });
+        expect(mockExec).toHaveBeenCalledWith(
+            'podman',
+            ['stop', 'container-id'],
+            {
+                silent: true,
+            }
+        );
     });
 
     it('marks run as failed when no validations are selected', async () => {
@@ -359,7 +360,9 @@ describe('main.ts', () => {
 
         mockWaitForWebsite
             .mockResolvedValueOnce(undefined)
-            .mockRejectedValueOnce(new Error('Timed out waiting for Team Engine'));
+            .mockRejectedValueOnce(
+                new Error('Timed out waiting for Team Engine')
+            );
 
         await run();
 
