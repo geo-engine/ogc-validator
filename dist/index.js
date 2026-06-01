@@ -28026,7 +28026,7 @@ var MediaTypes;
     });
 };
 
-var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$5 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28048,7 +28048,7 @@ class Summary {
      * @returns step summary file path
      */
     filePath() {
-        return __awaiter$4(this, void 0, void 0, function* () {
+        return __awaiter$5(this, void 0, void 0, function* () {
             if (this._filePath) {
                 return this._filePath;
             }
@@ -28092,7 +28092,7 @@ class Summary {
      * @returns {Promise<Summary>} summary instance
      */
     write(options) {
-        return __awaiter$4(this, void 0, void 0, function* () {
+        return __awaiter$5(this, void 0, void 0, function* () {
             const overwrite = !!(options === null || options === void 0 ? void 0 : options.overwrite);
             const filePath = yield this.filePath();
             const writeFunc = overwrite ? writeFile : appendFile;
@@ -28106,7 +28106,7 @@ class Summary {
      * @returns {Summary} summary instance
      */
     clear() {
-        return __awaiter$4(this, void 0, void 0, function* () {
+        return __awaiter$5(this, void 0, void 0, function* () {
             return this.emptyBuffer().write({ overwrite: true });
         });
     }
@@ -28299,7 +28299,7 @@ class Summary {
 const _summary = new Summary();
 const summary = _summary;
 
-var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$4 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28313,7 +28313,7 @@ const { chmod, copyFile, lstat, mkdir, open, readdir, rename, rm, rmdir, stat, s
 const IS_WINDOWS$1 = process.platform === 'win32';
 fs.constants.O_RDONLY;
 function exists(fsPath) {
-    return __awaiter$3(this, void 0, void 0, function* () {
+    return __awaiter$4(this, void 0, void 0, function* () {
         try {
             yield stat(fsPath);
         }
@@ -28348,7 +28348,7 @@ function isRooted(p) {
  * @return if file exists and is executable, returns the file path. otherwise empty string.
  */
 function tryGetExecutablePath(filePath, extensions) {
-    return __awaiter$3(this, void 0, void 0, function* () {
+    return __awaiter$4(this, void 0, void 0, function* () {
         let stats = undefined;
         try {
             // test file exists
@@ -28441,7 +28441,7 @@ function isUnixExecutable(stats) {
             stats.uid === process.getuid()));
 }
 
-var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$3 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28459,7 +28459,7 @@ var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _argu
  * @returns   Promise<string>   path to tool
  */
 function which(tool, check) {
-    return __awaiter$2(this, void 0, void 0, function* () {
+    return __awaiter$3(this, void 0, void 0, function* () {
         if (!tool) {
             throw new Error("parameter 'tool' is required");
         }
@@ -28489,7 +28489,7 @@ function which(tool, check) {
  * @returns   Promise<string[]>  the paths of the tool
  */
 function findInPath(tool) {
-    return __awaiter$2(this, void 0, void 0, function* () {
+    return __awaiter$3(this, void 0, void 0, function* () {
         if (!tool) {
             throw new Error("parameter 'tool' is required");
         }
@@ -28540,7 +28540,7 @@ function findInPath(tool) {
     });
 }
 
-var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$2 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -28888,7 +28888,7 @@ class ToolRunner extends events$1.EventEmitter {
      * @returns   number
      */
     exec() {
-        return __awaiter$1(this, void 0, void 0, function* () {
+        return __awaiter$2(this, void 0, void 0, function* () {
             // root the tool path if it is unrooted and contains relative pathing
             if (!isRooted(this.toolPath) &&
                 (this.toolPath.includes('/') ||
@@ -28899,7 +28899,7 @@ class ToolRunner extends events$1.EventEmitter {
             // if the tool is only a file name, then resolve it from the PATH
             // otherwise verify it exists (add extension on Windows if necessary)
             this.toolPath = yield which(this.toolPath, true);
-            return new Promise((resolve, reject) => __awaiter$1(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => __awaiter$2(this, void 0, void 0, function* () {
                 this._debug(`exec tool: ${this.toolPath}`);
                 this._debug('arguments:');
                 for (const arg of this.args) {
@@ -29120,7 +29120,7 @@ class ExecState extends events$1.EventEmitter {
     }
 }
 
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter$1 = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -29140,7 +29140,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
  * @returns   Promise<number>    exit code
  */
 function exec(commandLine, args, options) {
-    return __awaiter(this, void 0, void 0, function* () {
+    return __awaiter$1(this, void 0, void 0, function* () {
         const commandArgs = argStringToArray(commandLine);
         if (commandArgs.length === 0) {
             throw new Error(`Parameter 'commandLine' cannot be null or empty.`);
@@ -29163,7 +29163,7 @@ function exec(commandLine, args, options) {
  * @returns   Promise<ExecOutput>   exit code, stdout, and stderr
  */
 function getExecOutput(commandLine, args, options) {
-    return __awaiter(this, void 0, void 0, function* () {
+    return __awaiter$1(this, void 0, void 0, function* () {
         var _a, _b;
         let stdout = '';
         let stderr = '';
@@ -29209,7 +29209,7 @@ function getExecOutput(commandLine, args, options) {
 os__default.platform();
 os__default.arch();
 
-(undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -29356,6 +29356,27 @@ function startGroup(name) {
  */
 function endGroup() {
     issue('endgroup');
+}
+/**
+ * Wrap an asynchronous function call in a group.
+ *
+ * Returns the same type as the function itself.
+ *
+ * @param name The name of the group
+ * @param fn The function to wrap in the group
+ */
+function group(name, fn) {
+    return __awaiter(this, void 0, void 0, function* () {
+        startGroup(name);
+        let result;
+        try {
+            result = yield fn();
+        }
+        finally {
+            endGroup();
+        }
+        return result;
+    });
 }
 
 /**
@@ -33446,38 +33467,150 @@ class XMLParser {
     }
 }
 
+class OgcApiProcesses10Service {
+    name = 'OGC API - Processes 1.0';
+    echoProcessId;
+    testsToIgnore;
+    xmlFilePath = 'test-results-processes.xml';
+    constructor(echoProcessId, testsToIgnore) {
+        this.echoProcessId = echoProcessId;
+        this.testsToIgnore = testsToIgnore;
+    }
+    printParams() {
+        return [
+            {
+                key: OGC_API_KEYS.PROCESSES.ECHOPROCESSID,
+                value: this.echoProcessId,
+            },
+            {
+                key: OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE,
+                value: this.testsToIgnore.join(', ') || '(none)',
+            },
+        ];
+    }
+    request(teamengineUrl, serviceUrl) {
+        const url = `${teamengineUrl}/rest/suites/ogcapi-processes-1.0/run?` +
+            new URLSearchParams({
+                iut: serviceUrl,
+                echoprocessid: this.echoProcessId,
+            }).toString();
+        return new Request(url, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/xml', // delivers TestNG XML
+                Authorization: 'Basic ' +
+                    Buffer.from('ogctest:ogctest').toString('base64'),
+            },
+        });
+    }
+}
+class OgcApiFeatures10Service {
+    name = 'OGC API - Features 1.0';
+    testsToIgnore;
+    xmlFilePath = 'test-results-features.xml';
+    constructor(testsToIgnore) {
+        this.testsToIgnore = testsToIgnore;
+    }
+    printParams() {
+        return [
+            {
+                key: OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE,
+                value: this.testsToIgnore.join(', ') || '(none)',
+            },
+        ];
+    }
+    request(teamengineUrl, serviceUrl) {
+        const url = `${teamengineUrl}/rest/suites/ogcapi-features-1.0/run?` +
+            new URLSearchParams({
+                iut: serviceUrl,
+            }).toString();
+        return new Request(url, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/xml', // delivers TestNG XML
+                Authorization: 'Basic ' +
+                    Buffer.from('ogctest:ogctest').toString('base64'),
+            },
+        });
+    }
+}
+class OgcApiTiles10Service {
+    testsToIgnore;
+    tileMatrixSetDefinitionUrl;
+    urlTemplateForTiles;
+    tileMatrix;
+    minTileRow;
+    maxTileRow;
+    minTileCol;
+    maxTileCol;
+    name = 'OGC API - Tiles 1.0';
+    xmlFilePath = 'test-results-tiles.xml';
+    constructor(testsToIgnore, tileMatrixSetDefinitionUrl, urlTemplateForTiles, tileMatrix, minTileRow, maxTileRow, minTileCol, maxTileCol) {
+        this.testsToIgnore = testsToIgnore;
+        this.tileMatrixSetDefinitionUrl = tileMatrixSetDefinitionUrl;
+        this.urlTemplateForTiles = urlTemplateForTiles;
+        this.tileMatrix = tileMatrix;
+        this.minTileRow = minTileRow;
+        this.maxTileRow = maxTileRow;
+        this.minTileCol = minTileCol;
+        this.maxTileCol = maxTileCol;
+    }
+    printParams() {
+        return [
+            {
+                key: OGC_API_KEYS.TILES.TESTS_TO_IGNORE,
+                value: this.testsToIgnore.join(', ') || '(none)',
+            },
+        ];
+    }
+    request(teamengineUrl, serviceUrl) {
+        const url = `${teamengineUrl}/rest/suites/ogcapi-tiles-1.0/run?` +
+            new URLSearchParams({
+                iut: serviceUrl,
+                tilematrixsetdefinitionuri: this.tileMatrixSetDefinitionUrl,
+                urltemplatefortiles: this.urlTemplateForTiles,
+                tilematrix: this.tileMatrix.toString(),
+                mintilerow: this.minTileRow.toString(),
+                maxtilerow: this.maxTileRow.toString(),
+                mintilecol: this.minTileCol.toString(),
+                maxtilecol: this.maxTileCol.toString(),
+            }).toString();
+        return new Request(url, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/xml', // delivers TestNG XML; alternatively, application/json could be used for JSON output
+                Authorization: 'Basic ' +
+                    Buffer.from('ogctest:ogctest').toString('base64'),
+            },
+        });
+    }
+}
+
 const OGC_API_KEYS = {
     SERVICE_URL: 'service-url',
+    TEAMENGINE_IMAGE: 'teamengine-image',
     TEAMENGINE_PORT: 'teamengine-port',
-    // common 1.0
-    COMMON: {
-        FLAG: 'ogc-api-common',
-        CONTAINER_TAG: 'ogc-api-common-container-tag',
-        TESTS_TO_IGNORE: 'ogc-api-common-ignore',
-    },
     // processes 1.0
     PROCESSES: {
         FLAG: 'ogc-api-processes',
-        CONTAINER_TAG: 'ogc-api-processes-container-tag',
         ECHOPROCESSID: 'echoprocessid',
         TESTS_TO_IGNORE: 'ogc-api-processes-ignore',
     },
     // features 1.0
     FEATURES: {
         FLAG: 'ogc-api-features',
-        CONTAINER_TAG: 'ogc-api-features-container-tag',
         TESTS_TO_IGNORE: 'ogc-api-features-ignore',
     },
     // tiles 1.0
     TILES: {
         FLAG: 'ogc-api-tiles',
-        CONTAINER_TAG: 'ogc-api-tiles-container-tag',
-        URL_TEMPLATE_FOR_TILES: 'urltemplatefortiles',
-        TILE_MATRIX: 'tilematrix',
-        MIN_TILE_ROW: 'mintilerow',
-        MAX_TILE_ROW: 'maxtilerow',
-        MIN_TILE_COL: 'mintilecol',
-        MAX_TILE_COL: 'maxtilecol',
+        TILE_MATRIX_SET_DEFINITION_URL: 'ogc-api-tiles-tilematrixsetdefinitionurl',
+        URL_TEMPLATE_FOR_TILES: 'ogc-api-tiles-urltemplatefortiles',
+        TILE_MATRIX: 'ogc-api-tiles-tilematrix',
+        MIN_TILE_ROW: 'ogc-api-tiles-mintilerow',
+        MAX_TILE_ROW: 'ogc-api-tiles-maxtilerow',
+        MIN_TILE_COL: 'ogc-api-tiles-mintilecol',
+        MAX_TILE_COL: 'ogc-api-tiles-maxtilecol',
         TESTS_TO_IGNORE: 'ogc-api-tiles-ignore',
     },
 };
@@ -33493,198 +33626,43 @@ function getParams() {
     //     10
     // );
     const teamenginePort = 8080; // default port
-    const params = { serviceUrl, teamenginePort };
-    const ogcApiCommon10 = OgcApiCommon10Params.fromInput();
-    const ogcApiProcesses10 = OgcApiProcesses10Params.fromInput();
-    const ogcApiFeatures10 = OgcApiFeatures10Params.fromInput();
-    const ogcApiTiles10 = OgcApiTiles10Params.fromInput();
-    if (ogcApiCommon10)
-        params.ogcApiCommon10 = ogcApiCommon10;
-    if (ogcApiProcesses10)
-        params.ogcApiProcesses10 = ogcApiProcesses10;
-    if (ogcApiFeatures10)
-        params.ogcApiFeatures10 = ogcApiFeatures10;
-    if (ogcApiTiles10)
-        params.ogcApiTiles10 = ogcApiTiles10;
+    const teamengineImage = getInput(OGC_API_KEYS.TEAMENGINE_IMAGE, {
+        required: true,
+        trimWhitespace: true,
+    });
+    const params = {
+        serviceUrl,
+        teamenginePort,
+        teamengineImage,
+        services: [],
+    };
+    if (getBooleanInput(OGC_API_KEYS.PROCESSES.FLAG)) {
+        params.services.push(new OgcApiProcesses10Service(getInput(OGC_API_KEYS.PROCESSES.ECHOPROCESSID), getMultilineInput(OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE, {
+            trimWhitespace: true,
+        })));
+    }
+    if (getBooleanInput(OGC_API_KEYS.FEATURES.FLAG)) {
+        params.services.push(new OgcApiFeatures10Service(getMultilineInput(OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE, {
+            trimWhitespace: true,
+        })));
+    }
+    if (getBooleanInput(OGC_API_KEYS.TILES.FLAG)) {
+        params.services.push(new OgcApiTiles10Service(getMultilineInput(OGC_API_KEYS.TILES.TESTS_TO_IGNORE, {
+            trimWhitespace: true,
+        }), getInput(OGC_API_KEYS.TILES.TILE_MATRIX_SET_DEFINITION_URL, {
+            trimWhitespace: true,
+        }), getInput(OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES, {
+            trimWhitespace: true,
+        }), getIntegerInput(OGC_API_KEYS.TILES.TILE_MATRIX), getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_ROW), getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_ROW), getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_COL), getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_COL)));
+    }
     return params;
 }
 function printParams(params) {
     info('Using parameters:');
     info(`- ${OGC_API_KEYS.SERVICE_URL}: ${params.serviceUrl}`);
     info(`- ${OGC_API_KEYS.TEAMENGINE_PORT}: ${params.teamenginePort}`);
-    for (const apiParams of [
-        ...(params.ogcApiCommon10?.printParams() ?? []),
-        ...(params.ogcApiProcesses10?.printParams() ?? []),
-        ...(params.ogcApiFeatures10?.printParams() ?? []),
-        ...(params.ogcApiTiles10?.printParams() ?? []),
-    ]) {
+    for (const apiParams of params.services.flatMap((s) => s.printParams())) {
         info(`- ${apiParams.key}: ${apiParams.value}`);
-    }
-}
-class OgcApiParams {
-    static fromInput() {
-        throw new Error('Not implemented');
-    }
-}
-class OgcApiCommon10Params extends OgcApiParams {
-    containerTag;
-    testsToIgnore;
-    constructor(containerTag, testsToIgnore) {
-        super();
-        this.containerTag = containerTag;
-        this.testsToIgnore = testsToIgnore;
-    }
-    static fromInput() {
-        if (!getBooleanInput(OGC_API_KEYS.COMMON.FLAG))
-            return undefined;
-        const containerTag = getInput(OGC_API_KEYS.COMMON.CONTAINER_TAG);
-        const testsToIgnore = getMultilineInput(OGC_API_KEYS.COMMON.TESTS_TO_IGNORE, { trimWhitespace: true });
-        return new OgcApiCommon10Params(containerTag, testsToIgnore);
-    }
-    printParams() {
-        return [
-            {
-                key: OGC_API_KEYS.COMMON.CONTAINER_TAG,
-                value: this.containerTag,
-            },
-            {
-                key: OGC_API_KEYS.COMMON.TESTS_TO_IGNORE,
-                value: this.testsToIgnore.join(', ') || '(none)',
-            },
-        ];
-    }
-}
-class OgcApiProcesses10Params extends OgcApiParams {
-    containerTag;
-    echoProcessId;
-    testsToIgnore;
-    constructor(containerTag, echoProcessId, testsToIgnore) {
-        super();
-        this.containerTag = containerTag;
-        this.echoProcessId = echoProcessId;
-        this.testsToIgnore = testsToIgnore;
-    }
-    static fromInput() {
-        if (!getBooleanInput(OGC_API_KEYS.PROCESSES.FLAG))
-            return undefined;
-        const containerTag = getInput(OGC_API_KEYS.PROCESSES.CONTAINER_TAG);
-        const echoProcessId = getInput(OGC_API_KEYS.PROCESSES.ECHOPROCESSID);
-        const testsToIgnore = getMultilineInput(OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE, { trimWhitespace: true });
-        return new OgcApiProcesses10Params(containerTag, echoProcessId, testsToIgnore);
-    }
-    printParams() {
-        return [
-            {
-                key: OGC_API_KEYS.PROCESSES.CONTAINER_TAG,
-                value: this.containerTag,
-            },
-            {
-                key: OGC_API_KEYS.PROCESSES.ECHOPROCESSID,
-                value: this.echoProcessId,
-            },
-            {
-                key: OGC_API_KEYS.PROCESSES.TESTS_TO_IGNORE,
-                value: this.testsToIgnore.join(', ') || '(none)',
-            },
-        ];
-    }
-}
-class OgcApiFeatures10Params extends OgcApiParams {
-    containerTag;
-    testsToIgnore;
-    constructor(containerTag, testsToIgnore) {
-        super();
-        this.containerTag = containerTag;
-        this.testsToIgnore = testsToIgnore;
-    }
-    static fromInput() {
-        if (!getBooleanInput(OGC_API_KEYS.FEATURES.FLAG))
-            return undefined;
-        const containerTag = getInput(OGC_API_KEYS.FEATURES.CONTAINER_TAG);
-        const testsToIgnore = getMultilineInput(OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE, { trimWhitespace: true });
-        return new OgcApiFeatures10Params(containerTag, testsToIgnore);
-    }
-    printParams() {
-        return [
-            {
-                key: OGC_API_KEYS.FEATURES.CONTAINER_TAG,
-                value: this.containerTag,
-            },
-            {
-                key: OGC_API_KEYS.FEATURES.TESTS_TO_IGNORE,
-                value: this.testsToIgnore.join(', ') || '(none)',
-            },
-        ];
-    }
-}
-class OgcApiTiles10Params extends OgcApiParams {
-    containerTag;
-    urlTemplateForTiles;
-    tileMatrix;
-    minTileRow;
-    maxTileRow;
-    minTileCol;
-    maxTileCol;
-    testsToIgnore;
-    constructor(containerTag, urlTemplateForTiles, tileMatrix, minTileRow, maxTileRow, minTileCol, maxTileCol, testsToIgnore) {
-        super();
-        this.containerTag = containerTag;
-        this.urlTemplateForTiles = urlTemplateForTiles;
-        this.tileMatrix = tileMatrix;
-        this.minTileRow = minTileRow;
-        this.maxTileRow = maxTileRow;
-        this.minTileCol = minTileCol;
-        this.maxTileCol = maxTileCol;
-        this.testsToIgnore = testsToIgnore;
-    }
-    static fromInput() {
-        if (!getBooleanInput(OGC_API_KEYS.TILES.FLAG))
-            return undefined;
-        const containerTag = getInput(OGC_API_KEYS.TILES.CONTAINER_TAG);
-        const urlTemplateForTiles = getInput(OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES, { required: true, trimWhitespace: true });
-        const tileMatrix = getIntegerInput(OGC_API_KEYS.TILES.TILE_MATRIX);
-        const minTileRow = getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_ROW);
-        const maxTileRow = getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_ROW);
-        const minTileCol = getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_COL);
-        const maxTileCol = getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_COL);
-        const testsToIgnore = getMultilineInput(OGC_API_KEYS.TILES.TESTS_TO_IGNORE, { trimWhitespace: true });
-        return new OgcApiTiles10Params(containerTag, urlTemplateForTiles, tileMatrix, minTileRow, maxTileRow, minTileCol, maxTileCol, testsToIgnore);
-    }
-    printParams() {
-        return [
-            {
-                key: OGC_API_KEYS.TILES.CONTAINER_TAG,
-                value: this.containerTag,
-            },
-            {
-                key: OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES,
-                value: this.urlTemplateForTiles,
-            },
-            {
-                key: OGC_API_KEYS.TILES.TILE_MATRIX,
-                value: this.tileMatrix.toString(),
-            },
-            {
-                key: OGC_API_KEYS.TILES.MIN_TILE_ROW,
-                value: this.minTileRow.toString(),
-            },
-            {
-                key: OGC_API_KEYS.TILES.MAX_TILE_ROW,
-                value: this.maxTileRow.toString(),
-            },
-            {
-                key: OGC_API_KEYS.TILES.MIN_TILE_COL,
-                value: this.minTileCol.toString(),
-            },
-            {
-                key: OGC_API_KEYS.TILES.MAX_TILE_COL,
-                value: this.maxTileCol.toString(),
-            },
-            {
-                key: OGC_API_KEYS.TILES.TESTS_TO_IGNORE,
-                value: this.testsToIgnore.join(', ') || '(none)',
-            },
-        ];
     }
 }
 function getIntegerInput(key) {
@@ -33707,6 +33685,7 @@ const WAIT_TIMEOUT = 300; // 5 minutes in seconds
  */
 async function run() {
     const summaries = [];
+    let containerId;
     try {
         const params = getParams();
         printParams(params);
@@ -33717,77 +33696,17 @@ async function run() {
         await assertPodmanExists();
         info(`Waiting for ${params.serviceUrl} …`);
         await waitForWebsite(params.serviceUrl, WAIT_TIMEOUT);
-        if (params.ogcApiCommon10) {
-            startGroup('OGC API - Common 1.0 Validation');
-            info('Validating OGC API - Common …');
-            const testRequest = ogcApiCommonTestRequest(teamengine_url, params.serviceUrl, params.ogcApiCommon10);
-            const testsToIgnore = params.ogcApiCommon10.testsToIgnore;
-            const summary = await run_with_container({
-                containerName: 'teamengine-production',
-                containerTag: params.ogcApiCommon10.containerTag,
-                teamengine_url,
-                validationFn: validateOGCAPI({
-                    testRequest,
-                    testsToIgnore,
-                    xmlFilePath: 'test-results-common.xml',
-                }),
+        containerId = await startContainer(teamengine_url, params.teamengineImage);
+        for (const serviceConfig of params.services) {
+            const summary = await group(`Validating OGC API - ${serviceConfig.name}`, async () => {
+                info(`Validating OGC API - ${serviceConfig.name} …`);
+                return await validateOGCAPI({
+                    testRequest: serviceConfig.request(teamengine_url, params.serviceUrl),
+                    testsToIgnore: serviceConfig.testsToIgnore,
+                    xmlFilePath: serviceConfig.xmlFilePath,
+                });
             });
             summaries.push(summary);
-            endGroup();
-        }
-        if (params.ogcApiProcesses10) {
-            startGroup('OGC API - Processes 1.0 Validation');
-            info('Validating OGC API - Processes …');
-            const testRequest = ogcApiProcessesTestRequest(teamengine_url, params.serviceUrl, params.ogcApiProcesses10);
-            const testsToIgnore = params.ogcApiProcesses10.testsToIgnore;
-            const summary = await run_with_container({
-                containerName: 'ets-ogcapi-processes10',
-                containerTag: params.ogcApiProcesses10.containerTag,
-                teamengine_url,
-                validationFn: validateOGCAPI({
-                    testRequest,
-                    testsToIgnore,
-                    xmlFilePath: 'test-results-processes.xml',
-                }),
-            });
-            summaries.push(summary);
-            endGroup();
-        }
-        if (params.ogcApiFeatures10) {
-            startGroup('OGC API - Features 1.0 Validation');
-            info('Validating OGC API - Features …');
-            const testRequest = ogcApiFeaturesTestRequest(teamengine_url, params.serviceUrl, params.ogcApiFeatures10);
-            const testsToIgnore = params.ogcApiFeatures10.testsToIgnore;
-            const summary = await run_with_container({
-                containerName: 'ets-ogcapi-features10',
-                containerTag: params.ogcApiFeatures10.containerTag,
-                teamengine_url,
-                validationFn: validateOGCAPI({
-                    testRequest,
-                    testsToIgnore,
-                    xmlFilePath: 'test-results-features.xml',
-                }),
-            });
-            summaries.push(summary);
-            endGroup();
-        }
-        if (params.ogcApiTiles10) {
-            startGroup('OGC API - Tiles 1.0 Validation');
-            info('Validating OGC API - Tiles …');
-            const testRequest = ogcApiTilesTestRequest(teamengine_url, params.serviceUrl, params.ogcApiTiles10);
-            const testsToIgnore = params.ogcApiTiles10.testsToIgnore;
-            const summary = await run_with_container({
-                containerName: 'ets-ogcapi-tiles10',
-                containerTag: params.ogcApiTiles10.containerTag,
-                teamengine_url,
-                validationFn: validateOGCAPI({
-                    testRequest,
-                    testsToIgnore,
-                    xmlFilePath: 'test-results-tiles.xml',
-                }),
-            });
-            summaries.push(summary);
-            endGroup();
         }
         if (!summaries.length) {
             warning('No validations were selected. Please enable at least one validation option.');
@@ -33804,6 +33723,10 @@ async function run() {
         // Fail the workflow run if an error occurs
         if (error instanceof Error)
             setFailed(error.message);
+    }
+    finally {
+        if (containerId)
+            await stopContainer(containerId);
     }
     const tableHeaders = [
         'Test Suite',
@@ -33861,91 +33784,78 @@ async function assertServerIsNotResponding(serverUrl) {
         info(`Port ${new URL(serverUrl).port} on ${new URL(serverUrl).hostname} is free to use.`);
     }
 }
-async function run_with_container({ containerName, containerTag, teamengine_url, validationFn, }) {
-    const containerImage = `docker.io/ogccite/${containerName}:${containerTag}`;
-    const validatorServerContainerId = (await getExecOutput('podman', ['run', '--rm', '--detach', '--network', 'host', containerImage], {
+async function startContainer(teamengineUrl, containerName) {
+    const containerImage = `docker.io/ogccite/${containerName}`;
+    const containerId = (await getExecOutput('podman', ['run', '--rm', '--detach', '--network', 'host', containerImage], {
         silent: isDebug() ? false : true,
     })).stdout.trim();
     try {
         info(`Waiting for Team Engine server for image <${containerImage}> …`);
-        await waitForWebsite(teamengine_url, WAIT_TIMEOUT);
-        return await validationFn();
+        await waitForWebsite(teamengineUrl, WAIT_TIMEOUT);
+        return containerId;
     }
-    finally {
-        // Stop the validator server
-        await exec('podman', ['stop', validatorServerContainerId], {
-            silent: true,
-        });
-        info('Stopped Team Engine validator server');
+    catch (error) {
+        throw new Error(`Failed to start Team Engine validator server with image <${containerImage}>: ${error instanceof Error ? error.message : String(error)}`);
     }
 }
-function ogcApiCommonTestRequest(teamengine_url, serviceUrl, _params) {
-    const url = `${teamengine_url}/rest/suites/ogcapi-common-1.0/run?` +
-        new URLSearchParams({
-            iut: serviceUrl,
-        }).toString();
-    return new Request(url, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/xml', // delivers TestNG XML; alternatively, application/json could be used for JSON output
-            Authorization: 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
-        },
+async function stopContainer(containerId) {
+    await exec('podman', ['stop', containerId], {
+        silent: true,
     });
+    info('Stopped Team Engine validator server');
 }
-function ogcApiProcessesTestRequest(teamengine_url, serviceUrl, params) {
-    const url = `${teamengine_url}/rest/suites/ogcapi-processes-1.0/run?` +
-        new URLSearchParams({
-            iut: serviceUrl,
-            echoprocessid: params.echoProcessId,
-        }).toString();
-    return new Request(url, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/xml', // delivers TestNG XML
-            Authorization: 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
-        },
-    });
-}
-function ogcApiFeaturesTestRequest(teamengine_url, serviceUrl, _params) {
-    const url = `${teamengine_url}/rest/suites/ogcapi-features-1.0/run?` +
-        new URLSearchParams({
-            iut: serviceUrl,
-        }).toString();
-    return new Request(url, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/xml', // delivers TestNG XML
-            Authorization: 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
-        },
-    });
-}
-function ogcApiTilesTestRequest(teamengine_url, serviceUrl, params) {
-    const url = `${teamengine_url}/rest/suites/ogcapi-tiles-1.0/run?` +
-        new URLSearchParams({
-            iut: serviceUrl,
-            urltemplatefortiles: params.urlTemplateForTiles,
-            tilematrix: params.tileMatrix.toString(),
-            mintilerow: params.minTileRow.toString(),
-            maxtilerow: params.maxTileRow.toString(),
-            mintilecol: params.minTileCol.toString(),
-            maxtilecol: params.maxTileCol.toString(),
-        }).toString();
-    return new Request(url, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/xml', // delivers TestNG XML; alternatively, application/json could be used for JSON output
-            Authorization: 'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
-        },
-    });
-}
-function validateOGCAPI({ testRequest, testsToIgnore, xmlFilePath, }) {
-    return () => _validateOGCAPI({
-        testRequest,
-        testsToIgnore,
-        xmlFilePath,
-    });
-}
-async function _validateOGCAPI({ testRequest, testsToIgnore, xmlFilePath, }) {
+// async function run_with_container({
+//     containerName,
+//     containerTag,
+//     teamengine_url,
+//     validationFn,
+// }: {
+//     containerName: string;
+//     containerTag: string;
+//     teamengine_url: string;
+//     validationFn: () => Promise<TestSummary>;
+// }): Promise<TestSummary> {
+//     const containerImage = `docker.io/ogccite/${containerName}:${containerTag}`;
+//     const validatorServerContainerId = (
+//         await getExecOutput(
+//             'podman',
+//             ['run', '--rm', '--detach', '--network', 'host', containerImage],
+//             {
+//                 silent: core.isDebug() ? false : true,
+//             }
+//         )
+//     ).stdout.trim();
+//     try {
+//         core.info(
+//             `Waiting for Team Engine server for image <${containerImage}> …`
+//         );
+//         await waitForWebsite(teamengine_url, WAIT_TIMEOUT);
+//         return await validationFn();
+//     } finally {
+//         // Stop the validator server
+//         await exec('podman', ['stop', validatorServerContainerId], {
+//             silent: true,
+//         });
+//         core.info('Stopped Team Engine validator server');
+//     }
+// }
+// export function validateOGCAPI({
+//     testRequest,
+//     testsToIgnore,
+//     xmlFilePath,
+// }: {
+//     testRequest: Request;
+//     testsToIgnore: string[];
+//     xmlFilePath: string;
+// }): () => Promise<TestSummary> {
+//     return () =>
+//         _validateOGCAPI({
+//             testRequest,
+//             testsToIgnore,
+//             xmlFilePath,
+//         });
+// }
+async function validateOGCAPI({ testRequest, testsToIgnore, xmlFilePath, }) {
     info(`Running tests using URL <${testRequest.url}> …`);
     const testResult = await fetch(testRequest);
     if (!testResult.ok) {
