@@ -3,14 +3,7 @@ import { waitForWebsite } from './wait.js';
 import { exec, getExecOutput } from '@actions/exec';
 import { JPathOrMatcher, XMLParser } from 'fast-xml-parser';
 import * as fs from 'fs/promises';
-import {
-    getParams,
-    OgcApiCommon10Params,
-    OgcApiFeatures10Params,
-    OgcApiProcesses10Params,
-    OgcApiTiles10Params,
-    printParams,
-} from './params.js';
+import { getParams, printParams } from './params.js';
 
 const WAIT_TIMEOUT: number = 300; // 5 minutes in seconds
 
@@ -21,6 +14,7 @@ const WAIT_TIMEOUT: number = 300; // 5 minutes in seconds
  */
 export async function run(): Promise<void> {
     const summaries = [];
+    let containerId: string | undefined;
 
     try {
         const params = getParams();
@@ -36,104 +30,28 @@ export async function run(): Promise<void> {
         core.info(`Waiting for ${params.serviceUrl} …`);
         await waitForWebsite(params.serviceUrl, WAIT_TIMEOUT);
 
-        if (params.ogcApiCommon10) {
-            core.startGroup('OGC API - Common 1.0 Validation');
-            core.info('Validating OGC API - Common …');
+        containerId = await startContainer(
+            teamengine_url,
+            params.teamengineImage
+        );
 
-            const testRequest = ogcApiCommonTestRequest(
-                teamengine_url,
-                params.serviceUrl,
-                params.ogcApiCommon10
+        for (const serviceConfig of params.services) {
+            const summary = await core.group(
+                `Validating OGC API - ${serviceConfig.name}`,
+                async () => {
+                    core.info(`Validating OGC API - ${serviceConfig.name} …`);
+
+                    return await validateOGCAPI({
+                        testRequest: serviceConfig.request(
+                            teamengine_url,
+                            params.serviceUrl
+                        ),
+                        testsToIgnore: serviceConfig.testsToIgnore,
+                        xmlFilePath: serviceConfig.xmlFilePath,
+                    });
+                }
             );
-            const testsToIgnore = params.ogcApiCommon10.testsToIgnore;
-            const summary = await run_with_container({
-                containerName: 'ets-ogcapi-common10',
-                containerTag: params.ogcApiCommon10.containerTag,
-                teamengine_url,
-                validationFn: validateOGCAPI({
-                    testRequest,
-                    testsToIgnore,
-                    xmlFilePath: 'test-results-common.xml',
-                }),
-            });
             summaries.push(summary);
-
-            core.endGroup();
-        }
-
-        if (params.ogcApiProcesses10) {
-            core.startGroup('OGC API - Processes 1.0 Validation');
-            core.info('Validating OGC API - Processes …');
-
-            const testRequest = ogcApiProcessesTestRequest(
-                teamengine_url,
-                params.serviceUrl,
-                params.ogcApiProcesses10
-            );
-            const testsToIgnore = params.ogcApiProcesses10.testsToIgnore;
-            const summary = await run_with_container({
-                containerName: 'ets-ogcapi-processes10',
-                containerTag: params.ogcApiProcesses10.containerTag,
-                teamengine_url,
-                validationFn: validateOGCAPI({
-                    testRequest,
-                    testsToIgnore,
-                    xmlFilePath: 'test-results-processes.xml',
-                }),
-            });
-            summaries.push(summary);
-
-            core.endGroup();
-        }
-
-        if (params.ogcApiFeatures10) {
-            core.startGroup('OGC API - Features 1.0 Validation');
-            core.info('Validating OGC API - Features …');
-
-            const testRequest = ogcApiFeaturesTestRequest(
-                teamengine_url,
-                params.serviceUrl,
-                params.ogcApiFeatures10
-            );
-            const testsToIgnore = params.ogcApiFeatures10.testsToIgnore;
-            const summary = await run_with_container({
-                containerName: 'ets-ogcapi-features10',
-                containerTag: params.ogcApiFeatures10.containerTag,
-                teamengine_url,
-                validationFn: validateOGCAPI({
-                    testRequest,
-                    testsToIgnore,
-                    xmlFilePath: 'test-results-features.xml',
-                }),
-            });
-            summaries.push(summary);
-
-            core.endGroup();
-        }
-
-        if (params.ogcApiTiles10) {
-            core.startGroup('OGC API - Tiles 1.0 Validation');
-            core.info('Validating OGC API - Tiles …');
-
-            const testRequest = ogcApiTilesTestRequest(
-                teamengine_url,
-                params.serviceUrl,
-                params.ogcApiTiles10
-            );
-            const testsToIgnore = params.ogcApiTiles10.testsToIgnore;
-            const summary = await run_with_container({
-                containerName: 'ets-ogcapi-tiles10',
-                containerTag: params.ogcApiTiles10.containerTag,
-                teamengine_url,
-                validationFn: validateOGCAPI({
-                    testRequest,
-                    testsToIgnore,
-                    xmlFilePath: 'test-results-tiles.xml',
-                }),
-            });
-            summaries.push(summary);
-
-            core.endGroup();
         }
 
         if (!summaries.length) {
@@ -151,6 +69,8 @@ export async function run(): Promise<void> {
     } catch (error) {
         // Fail the workflow run if an error occurs
         if (error instanceof Error) core.setFailed(error.message);
+    } finally {
+        if (containerId) await stopContainer(containerId);
     }
 
     const tableHeaders = [
@@ -218,19 +138,12 @@ async function assertServerIsNotResponding(serverUrl: string): Promise<void> {
     }
 }
 
-async function run_with_container({
-    containerName,
-    containerTag,
-    teamengine_url,
-    validationFn,
-}: {
-    containerName: string;
-    containerTag: string;
-    teamengine_url: string;
-    validationFn: () => Promise<TestSummary>;
-}): Promise<TestSummary> {
-    const containerImage = `docker.io/ogccite/${containerName}:${containerTag}`;
-    const validatorServerContainerId = (
+async function startContainer(
+    teamengineUrl: string,
+    containerName: string
+): Promise<string> {
+    const containerImage = `docker.io/ogccite/${containerName}`;
+    const containerId = (
         await getExecOutput(
             'podman',
             ['run', '--rm', '--detach', '--network', 'host', containerImage],
@@ -244,117 +157,81 @@ async function run_with_container({
         core.info(
             `Waiting for Team Engine server for image <${containerImage}> …`
         );
-        await waitForWebsite(teamengine_url, WAIT_TIMEOUT);
+        await waitForWebsite(teamengineUrl, WAIT_TIMEOUT);
 
-        return await validationFn();
-    } finally {
-        // Stop the validator server
-        await exec('podman', ['stop', validatorServerContainerId], {
-            silent: true,
-        });
-        core.info('Stopped Team Engine validator server');
+        return containerId;
+    } catch (error) {
+        throw new Error(
+            `Failed to start Team Engine validator server with image <${containerImage}>: ${
+                error instanceof Error ? error.message : String(error)
+            }`
+        );
     }
 }
 
-export function ogcApiCommonTestRequest(
-    teamengine_url: string,
-    serviceUrl: string,
-    _params: OgcApiCommon10Params
-): Request {
-    const url =
-        `${teamengine_url}/rest/suites/ogcapi-common-1.0/run?` +
-        new URLSearchParams({
-            iut: serviceUrl,
-        }).toString();
-    return new Request(url, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/xml', // delivers TestNG XML; alternatively, application/json could be used for JSON output
-            Authorization:
-                'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
-        },
+async function stopContainer(containerId: string) {
+    await exec('podman', ['stop', containerId], {
+        silent: true,
     });
+    core.info('Stopped Team Engine validator server');
 }
 
-export function ogcApiProcessesTestRequest(
-    teamengine_url: string,
-    serviceUrl: string,
-    params: OgcApiProcesses10Params
-): Request {
-    const url =
-        `${teamengine_url}/rest/suites/ogcapi-processes-1.0/run?` +
-        new URLSearchParams({
-            iut: serviceUrl,
-            echoprocessid: params.echoProcessId,
-        }).toString();
-    return new Request(url, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/xml', // delivers TestNG XML
-            Authorization:
-                'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
-        },
-    });
-}
+// async function run_with_container({
+//     containerName,
+//     containerTag,
+//     teamengine_url,
+//     validationFn,
+// }: {
+//     containerName: string;
+//     containerTag: string;
+//     teamengine_url: string;
+//     validationFn: () => Promise<TestSummary>;
+// }): Promise<TestSummary> {
+//     const containerImage = `docker.io/ogccite/${containerName}:${containerTag}`;
+//     const validatorServerContainerId = (
+//         await getExecOutput(
+//             'podman',
+//             ['run', '--rm', '--detach', '--network', 'host', containerImage],
+//             {
+//                 silent: core.isDebug() ? false : true,
+//             }
+//         )
+//     ).stdout.trim();
 
-export function ogcApiFeaturesTestRequest(
-    teamengine_url: string,
-    serviceUrl: string,
-    _params: OgcApiFeatures10Params
-): Request {
-    const url =
-        `${teamengine_url}/rest/suites/ogcapi-features-1.0/run?` +
-        new URLSearchParams({
-            iut: serviceUrl,
-        }).toString();
-    return new Request(url, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/xml', // delivers TestNG XML
-            Authorization:
-                'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
-        },
-    });
-}
+//     try {
+//         core.info(
+//             `Waiting for Team Engine server for image <${containerImage}> …`
+//         );
+//         await waitForWebsite(teamengine_url, WAIT_TIMEOUT);
 
-export function ogcApiTilesTestRequest(
-    teamengine_url: string,
-    serviceUrl: string,
-    _params: OgcApiTiles10Params
-): Request {
-    const url =
-        `${teamengine_url}/rest/suites/ogcapi-tiles-1.0/run?` +
-        new URLSearchParams({
-            iut: serviceUrl,
-        }).toString();
-    return new Request(url, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/xml', // delivers TestNG XML; alternatively, application/json could be used for JSON output
-            Authorization:
-                'Basic ' + Buffer.from('ogctest:ogctest').toString('base64'),
-        },
-    });
-}
+//         return await validationFn();
+//     } finally {
+//         // Stop the validator server
+//         await exec('podman', ['stop', validatorServerContainerId], {
+//             silent: true,
+//         });
+//         core.info('Stopped Team Engine validator server');
+//     }
+// }
 
-export function validateOGCAPI({
-    testRequest,
-    testsToIgnore,
-    xmlFilePath,
-}: {
-    testRequest: Request;
-    testsToIgnore: string[];
-    xmlFilePath: string;
-}): () => Promise<TestSummary> {
-    return () =>
-        _validateOGCAPI({
-            testRequest,
-            testsToIgnore,
-            xmlFilePath,
-        });
-}
+// export function validateOGCAPI({
+//     testRequest,
+//     testsToIgnore,
+//     xmlFilePath,
+// }: {
+//     testRequest: Request;
+//     testsToIgnore: string[];
+//     xmlFilePath: string;
+// }): () => Promise<TestSummary> {
+//     return () =>
+//         _validateOGCAPI({
+//             testRequest,
+//             testsToIgnore,
+//             xmlFilePath,
+//         });
+// }
 
-export async function _validateOGCAPI({
+export async function validateOGCAPI({
     testRequest,
     testsToIgnore,
     xmlFilePath,

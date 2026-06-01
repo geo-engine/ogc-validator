@@ -5,14 +5,12 @@ import { InputOptions } from '@actions/core';
 jest.unstable_mockModule('@actions/core', () => core);
 
 // import dynamically to ensure mocks are used
+const { getParams, printParams } = await import('../src/params.js');
 const {
-    getParams,
-    printParams,
-    OgcApiCommon10Params,
-    OgcApiProcesses10Params,
-    OgcApiFeatures10Params,
-    OgcApiTiles10Params,
-} = await import('../src/params.js');
+    OgcApiProcesses10Service,
+    OgcApiFeatures10Service,
+    OgcApiTiles10Service,
+} = await import('../src/services.js');
 
 describe('getParams', () => {
     beforeEach(() => {
@@ -25,6 +23,8 @@ describe('getParams', () => {
                 switch (name) {
                     case 'service-url':
                         return 'https://example.com';
+                    case 'teamengine-image':
+                        return 'teamengine-production:1.0-SNAPSHOT';
                 }
                 return '';
             }
@@ -36,6 +36,8 @@ describe('getParams', () => {
         expect(params).toEqual({
             serviceUrl: 'https://example.com',
             teamenginePort: 8080,
+            teamengineImage: 'teamengine-production:1.0-SNAPSHOT',
+            services: [],
         });
     });
 
@@ -44,10 +46,22 @@ describe('getParams', () => {
             switch (name) {
                 case 'service-url':
                     return 'https://example.com';
-                case 'ogc-api-processes-container-tag':
-                    return '1.0.0';
+                case 'teamengine-image':
+                    return 'teamengine-production:1.0-SNAPSHOT';
                 case 'echoprocessid':
                     return 'echo-id';
+                case 'ogc-api-tiles-urltemplatefortiles':
+                    return 'https://example.com/tiles/{tileMatrix}/{tileRow}/{tileCol}';
+                case 'ogc-api-tiles-tilematrix':
+                    return '1';
+                case 'ogc-api-tiles-mintilerow':
+                    return '0';
+                case 'ogc-api-tiles-maxtilerow':
+                    return '1';
+                case 'ogc-api-tiles-mintilecol':
+                    return '0';
+                case 'ogc-api-tiles-maxtilecol':
+                    return '1';
                 default:
                     return '';
             }
@@ -63,19 +77,21 @@ describe('getParams', () => {
         expect(params).toEqual({
             serviceUrl: 'https://example.com',
             teamenginePort: 8080,
-            ogcApiCommon10: new OgcApiCommon10Params('', [
-                'ignore1',
-                'ignore2',
-            ]),
-            ogcApiProcesses10: new OgcApiProcesses10Params('1.0.0', 'echo-id', [
-                'ignore1',
-                'ignore2',
-            ]),
-            ogcApiFeatures10: new OgcApiFeatures10Params('', [
-                'ignore1',
-                'ignore2',
-            ]),
-            ogcApiTiles10: new OgcApiTiles10Params('', ['ignore1', 'ignore2']),
+            teamengineImage: 'teamengine-production:1.0-SNAPSHOT',
+            services: [
+                new OgcApiProcesses10Service('echo-id', ['ignore1', 'ignore2']),
+                new OgcApiFeatures10Service(['ignore1', 'ignore2']),
+                new OgcApiTiles10Service(
+                    ['ignore1', 'ignore2'],
+                    '',
+                    'https://example.com/tiles/{tileMatrix}/{tileRow}/{tileCol}',
+                    1,
+                    0,
+                    1,
+                    0,
+                    1
+                ),
+            ],
         });
     });
 });
@@ -89,6 +105,8 @@ describe('printParams', () => {
         const params = {
             serviceUrl: 'https://example.com',
             teamenginePort: 8080,
+            teamengineImage: 'teamengine-production:1.0-SNAPSHOT',
+            services: [],
         };
 
         printParams(params);
@@ -104,10 +122,10 @@ describe('printParams', () => {
         const params = {
             serviceUrl: 'https://example.com',
             teamenginePort: 8080,
-            ogcApiProcesses10: new OgcApiProcesses10Params('1.0.0', 'echo-id', [
-                'ignore1',
-                'ignore2',
-            ]),
+            teamengineImage: 'teamengine-production:1.0-SNAPSHOT',
+            services: [
+                new OgcApiProcesses10Service('echo-id', ['ignore1', 'ignore2']),
+            ],
         };
 
         printParams(params);
@@ -115,9 +133,6 @@ describe('printParams', () => {
         expect(core.info).toHaveBeenCalledWith('Using parameters:');
         expect(core.info).toHaveBeenCalledWith(
             '- service-url: https://example.com'
-        );
-        expect(core.info).toHaveBeenCalledWith(
-            '- ogc-api-processes-container-tag: 1.0.0'
         );
         expect(core.info).toHaveBeenCalledWith('- echoprocessid: echo-id');
         expect(core.info).toHaveBeenCalledWith(
@@ -129,11 +144,8 @@ describe('printParams', () => {
         const params = {
             serviceUrl: 'https://example.com',
             teamenginePort: 8080,
-            ogcApiProcesses10: new OgcApiProcesses10Params(
-                '1.0.0',
-                'echo-id',
-                []
-            ),
+            teamengineImage: 'teamengine-production:1.0-SNAPSHOT',
+            services: [new OgcApiProcesses10Service('echo-id', [])],
         };
 
         printParams(params);
@@ -141,9 +153,6 @@ describe('printParams', () => {
         expect(core.info).toHaveBeenCalledWith('Using parameters:');
         expect(core.info).toHaveBeenCalledWith(
             '- service-url: https://example.com'
-        );
-        expect(core.info).toHaveBeenCalledWith(
-            '- ogc-api-processes-container-tag: 1.0.0'
         );
         expect(core.info).toHaveBeenCalledWith('- echoprocessid: echo-id');
         expect(core.info).toHaveBeenCalledWith(

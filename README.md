@@ -44,6 +44,12 @@ steps:
 | `ogc-api-features-ignore`         | Multi-line list of test identifiers to ignore for OGC API - Features validation  | `false`  | `''`                         |
 | `ogc-api-tiles`                   | If set, validate OGC API - Tiles                                                 | `false`  | `false`                      |
 | `ogc-api-tiles-container-tag`     | Container tag to use for OGC API - Tiles 1.0 validation                          | `false`  | `1.0-teamengine-6.0.0-RC2`   |
+| `urltemplatefortiles`             | URL template endpoint for tiles containing `tileMatrix`, `tileRow`, `tileCol`    | `false`  | `''`                         |
+| `tilematrix`                      | A valid tileMatrix numerical identifier                                          | `false`  | `1`                          |
+| `mintilerow`                      | The minimum tile row number (minTileRow) for the tile matrix                     | `false`  | `0`                          |
+| `maxtilerow`                      | The maximum tile row number (maxTileRow) for the tile matrix                     | `false`  | `1`                          |
+| `mintilecol`                      | The minimum tile column number (minTileCol) for the tile matrix                  | `false`  | `0`                          |
+| `maxtilecol`                      | The maximum tile column number (maxTileCol) for the tile matrix                  | `false`  | `1`                          |
 | `ogc-api-tiles-ignore`            | Multi-line list of test identifiers to ignore for OGC API - Tiles validation     | `false`  | `''`                         |
 
 ## Testing with `@github/local-action`

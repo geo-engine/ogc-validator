@@ -33472,6 +33472,12 @@ const OGC_API_KEYS = {
     TILES: {
         FLAG: 'ogc-api-tiles',
         CONTAINER_TAG: 'ogc-api-tiles-container-tag',
+        URL_TEMPLATE_FOR_TILES: 'urltemplatefortiles',
+        TILE_MATRIX: 'tilematrix',
+        MIN_TILE_ROW: 'mintilerow',
+        MAX_TILE_ROW: 'maxtilerow',
+        MIN_TILE_COL: 'mintilecol',
+        MAX_TILE_COL: 'maxtilecol',
         TESTS_TO_IGNORE: 'ogc-api-tiles-ignore',
     },
 };
@@ -33613,18 +33619,36 @@ class OgcApiFeatures10Params extends OgcApiParams {
 }
 class OgcApiTiles10Params extends OgcApiParams {
     containerTag;
+    urlTemplateForTiles;
+    tileMatrix;
+    minTileRow;
+    maxTileRow;
+    minTileCol;
+    maxTileCol;
     testsToIgnore;
-    constructor(containerTag, testsToIgnore) {
+    constructor(containerTag, urlTemplateForTiles, tileMatrix, minTileRow, maxTileRow, minTileCol, maxTileCol, testsToIgnore) {
         super();
         this.containerTag = containerTag;
+        this.urlTemplateForTiles = urlTemplateForTiles;
+        this.tileMatrix = tileMatrix;
+        this.minTileRow = minTileRow;
+        this.maxTileRow = maxTileRow;
+        this.minTileCol = minTileCol;
+        this.maxTileCol = maxTileCol;
         this.testsToIgnore = testsToIgnore;
     }
     static fromInput() {
         if (!getBooleanInput(OGC_API_KEYS.TILES.FLAG))
             return undefined;
         const containerTag = getInput(OGC_API_KEYS.TILES.CONTAINER_TAG);
+        const urlTemplateForTiles = getInput(OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES, { required: true, trimWhitespace: true });
+        const tileMatrix = getIntegerInput(OGC_API_KEYS.TILES.TILE_MATRIX);
+        const minTileRow = getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_ROW);
+        const maxTileRow = getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_ROW);
+        const minTileCol = getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_COL);
+        const maxTileCol = getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_COL);
         const testsToIgnore = getMultilineInput(OGC_API_KEYS.TILES.TESTS_TO_IGNORE, { trimWhitespace: true });
-        return new OgcApiTiles10Params(containerTag, testsToIgnore);
+        return new OgcApiTiles10Params(containerTag, urlTemplateForTiles, tileMatrix, minTileRow, maxTileRow, minTileCol, maxTileCol, testsToIgnore);
     }
     printParams() {
         return [
@@ -33633,11 +33657,46 @@ class OgcApiTiles10Params extends OgcApiParams {
                 value: this.containerTag,
             },
             {
+                key: OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES,
+                value: this.urlTemplateForTiles,
+            },
+            {
+                key: OGC_API_KEYS.TILES.TILE_MATRIX,
+                value: this.tileMatrix.toString(),
+            },
+            {
+                key: OGC_API_KEYS.TILES.MIN_TILE_ROW,
+                value: this.minTileRow.toString(),
+            },
+            {
+                key: OGC_API_KEYS.TILES.MAX_TILE_ROW,
+                value: this.maxTileRow.toString(),
+            },
+            {
+                key: OGC_API_KEYS.TILES.MIN_TILE_COL,
+                value: this.minTileCol.toString(),
+            },
+            {
+                key: OGC_API_KEYS.TILES.MAX_TILE_COL,
+                value: this.maxTileCol.toString(),
+            },
+            {
                 key: OGC_API_KEYS.TILES.TESTS_TO_IGNORE,
                 value: this.testsToIgnore.join(', ') || '(none)',
             },
         ];
     }
+}
+function getIntegerInput(key) {
+    const rawValue = getInput(key, {
+        required: true,
+        trimWhitespace: true,
+    });
+    const value = Number.parseInt(rawValue, 10);
+    if (Number.isNaN(value)) {
+        throw new Error(`Input ${key} must be an integer, got '${rawValue}'.`);
+    }
+    return value;
 }
 
 const WAIT_TIMEOUT = 300; // 5 minutes in seconds
@@ -33664,7 +33723,7 @@ async function run() {
             const testRequest = ogcApiCommonTestRequest(teamengine_url, params.serviceUrl, params.ogcApiCommon10);
             const testsToIgnore = params.ogcApiCommon10.testsToIgnore;
             const summary = await run_with_container({
-                containerName: 'ets-ogcapi-common10',
+                containerName: 'teamengine-production',
                 containerTag: params.ogcApiCommon10.containerTag,
                 teamengine_url,
                 validationFn: validateOGCAPI({
@@ -33860,10 +33919,16 @@ function ogcApiFeaturesTestRequest(teamengine_url, serviceUrl, _params) {
         },
     });
 }
-function ogcApiTilesTestRequest(teamengine_url, serviceUrl, _params) {
+function ogcApiTilesTestRequest(teamengine_url, serviceUrl, params) {
     const url = `${teamengine_url}/rest/suites/ogcapi-tiles-1.0/run?` +
         new URLSearchParams({
             iut: serviceUrl,
+            urltemplatefortiles: params.urlTemplateForTiles,
+            tilematrix: params.tileMatrix.toString(),
+            mintilerow: params.minTileRow.toString(),
+            maxtilerow: params.maxTileRow.toString(),
+            mintilecol: params.minTileCol.toString(),
+            maxtilecol: params.maxTileCol.toString(),
         }).toString();
     return new Request(url, {
         method: 'GET',

@@ -12,6 +12,10 @@ inputs:
     # teamengine-port:
     #     description: Port on which TeamEngine will run
     #     default: '8080'
+    teamengine-image:
+        description: TeamEngine image to use
+        required: true
+        default: 'teamengine-production:1.0-SNAPSHOT'
     service-url:
         description: URL of the OGC endpoint to validate
         required: true
@@ -21,7 +25,7 @@ inputs:
         default: false
     ogc-api-common-container-tag:
         description: Container tag to use for OGC API - Common validation
-        default: '1.0-teamengine-6.0.0-RC2'
+        default: '1.0-SNAPSHOT'
     ogc-api-common-ignore:
         description:
             Multi-line list of test identifiers to ignore for OGC API - Common
@@ -59,6 +63,33 @@ inputs:
     ogc-api-tiles-container-tag:
         description: Container tag to use for OGC API - Tiles 1.0 validation
         default: '1.2-teamengine-6.0.0-RC2'
+    ogc-api-tiles-tilematrixsetdefinitionurl:
+        description: URL to a tile matrix set definition
+        default: ''
+    ogc-api-tiles-urltemplatefortiles:
+        description:
+            URL template endpoint for tiles containing tileMatrix, tileRow and
+            tileCol variables
+        default: ''
+    ogc-api-tiles-tilematrix:
+        description: A valid tileMatrix numerical identifier
+        default: '1'
+    ogc-api-tiles-mintilerow:
+        description:
+            The minimum tile row number (minTileRow) for the tile matrix
+        default: '0'
+    ogc-api-tiles-maxtilerow:
+        description:
+            The maximum tile row number (maxTileRow) for the tile matrix
+        default: '1'
+    ogc-api-tiles-mintilecol:
+        description:
+            The minimum tile column number (minTileCol) for the tile matrix
+        default: '0'
+    ogc-api-tiles-maxtilecol:
+        description:
+            The maximum tile column number (maxTileCol) for the tile matrix
+        default: '1'
     ogc-api-tiles-ignore:
         description:
             Multi-line list of test identifiers to ignore for OGC API - Tiles
