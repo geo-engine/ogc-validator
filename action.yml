@@ -20,23 +20,9 @@ inputs:
         description: URL of the OGC endpoint to validate
         required: true
         default: http://localhost:8484/
-    ogc-api-common:
-        description: If set, validate OGC API - Common
-        default: false
-    ogc-api-common-container-tag:
-        description: Container tag to use for OGC API - Common validation
-        default: '1.0-SNAPSHOT'
-    ogc-api-common-ignore:
-        description:
-            Multi-line list of test identifiers to ignore for OGC API - Common
-            validation
-        default: ''
     ogc-api-processes:
         description: If set, validate OGC API - Processes
         default: false
-    ogc-api-processes-container-tag:
-        description: Container tag to use for OGC API - Processes 1.0 validation
-        default: '1.3-teamengine-6.0.0-RC2'
     echoprocessid:
         description:
             The process identifier to run for OGC API - Processes validation
@@ -49,9 +35,6 @@ inputs:
     ogc-api-features:
         description: If set, validate OGC API - Features
         default: false
-    ogc-api-features-container-tag:
-        description: Container tag to use for OGC API - Features 1.0 validation
-        default: '1.9-teamengine-6.0.0-RC2'
     ogc-api-features-ignore:
         description:
             Multi-line list of test identifiers to ignore for OGC API - Features
@@ -60,9 +43,6 @@ inputs:
     ogc-api-tiles:
         description: If set, validate OGC API - Tiles
         default: false
-    ogc-api-tiles-container-tag:
-        description: Container tag to use for OGC API - Tiles 1.0 validation
-        default: '1.2-teamengine-6.0.0-RC2'
     ogc-api-tiles-tilematrixsetdefinitionurl:
         description: URL to a tile matrix set definition
         default: ''
