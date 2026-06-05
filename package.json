@@ -1,17 +1,17 @@
 {
     "name": "ogc-validator",
     "description": "A GitHub Action to validate OGC APIs",
-    "version": "0.1.0",
+    "version": "3.0.0",
     "author": "",
     "type": "module",
     "private": true,
-    "homepage": "https://github.com/actions/typescript-action",
+    "homepage": "https://github.com/geo-engine/ogc-validator",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/actions/typescript-action.git"
+        "url": "git+https://github.com/geo-engine/ogc-validator.git"
     },
     "bugs": {
-        "url": "https://github.com/actions/typescript-action/issues"
+        "url": "https://github.com/geo-engine/ogc-validator/issues"
     },
     "keywords": [
         "actions"
@@ -21,6 +21,10 @@
     },
     "engines": {
         "node": ">=24.0.0"
+    },
+    "main": "dist/index.js",
+    "bin": {
+        "ogc-validator": "./dist/index.js"
     },
     "scripts": {
         "bundle": "npm run format:write && npm run package",
