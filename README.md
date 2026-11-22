@@ -31,28 +31,45 @@ steps:
 
 <!-- markdownlint-disable MD013 -->
 
-| Name                                       | Description                                                                                 | Required | Default                              |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------- | -------- | ------------------------------------ |
-| `teamengine-image`                         | TeamEngine image to use                                                                     | `true`   | `teamengine-production:1.0-SNAPSHOT` |
-| `service-url`                              | URL of the OGC endpoint to validate                                                         | `true`   | `http://localhost:8484/`             |
-| `ogc-api-common`                           | If set, validate OGC API - Common                                                           | `false`  | `false`                              |
-| `ogc-api-common-ignore`                    | Multi-line list of test identifiers to ignore for OGC API - Common validation               | `false`  | `''`                                 |
-| `ogc-api-processes`                        | If set, validate OGC API - Processes                                                        | `false`  | `false`                              |
-| `echoprocessid`                            | The process identifier to run for OGC API - Processes validation                            | `false`  | `echo`                               |
-| `ogc-api-processes-ignore`                 | Multi-line list of test identifiers to ignore for OGC API - Processes validation            | `false`  | `''`                                 |
-| `ogc-api-features`                         | If set, validate OGC API - Features                                                         | `false`  | `false`                              |
-| `ogc-api-features-ignore`                  | Multi-line list of test identifiers to ignore for OGC API - Features validation             | `false`  | `''`                                 |
-| `ogc-api-tiles`                            | If set, validate OGC API - Tiles                                                            | `false`  | `false`                              |
-| `ogc-api-tiles-tilematrixsetdefinitionurl` | URL to a tile matrix set definition                                                         | `false`  | `''`                                 |
-| `ogc-api-tiles-urltemplatefortiles`        | URL template endpoint for tiles containing `tileMatrix`, `tileRow`, and `tileCol` variables | `false`  | `''`                                 |
-| `ogc-api-tiles-tilematrix`                 | A valid tileMatrix numerical identifier                                                     | `false`  | `1`                                  |
-| `ogc-api-tiles-mintilerow`                 | The minimum tile row number (minTileRow) for the tile matrix                                | `false`  | `0`                                  |
-| `ogc-api-tiles-maxtilerow`                 | The maximum tile row number (maxTileRow) for the tile matrix                                | `false`  | `1`                                  |
-| `ogc-api-tiles-mintilecol`                 | The minimum tile column number (minTileCol) for the tile matrix                             | `false`  | `0`                                  |
-| `ogc-api-tiles-maxtilecol`                 | The maximum tile column number (maxTileCol) for the tile matrix                             | `false`  | `1`                                  |
-| `ogc-api-tiles-ignore`                     | Multi-line list of test identifiers to ignore for OGC API - Tiles validation                | `false`  | `''`                                 |
+| Name                                       | Description                                                                                                                          | Required | Default                              |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | -------- | ------------------------------------ |
+| `teamengine-image`                         | TeamEngine image to use                                                                                                              | `true`   | `teamengine-production:1.0-SNAPSHOT` |
+| `service-url`                              | URL of the OGC endpoint to validate                                                                                                  | `true`   | `http://localhost:8484/`             |
+| `ogc-api-common`                           | If set, validate OGC API - Common                                                                                                    | `false`  | `false`                              |
+| `ogc-api-common-ignore`                    | Multi-line list of test identifiers to ignore for OGC API - Common validation                                                        | `false`  | `''`                                 |
+| `ogc-api-processes`                        | If set, validate OGC API - Processes                                                                                                 | `false`  | `false`                              |
+| `echoprocessid`                            | The process identifier to run for OGC API - Processes validation                                                                     | `false`  | `echo`                               |
+| `ogc-api-processes-ignore`                 | Multi-line list of test identifiers to ignore for OGC API - Processes validation                                                     | `false`  | `''`                                 |
+| `ogc-api-features`                         | If set, validate OGC API - Features                                                                                                  | `false`  | `false`                              |
+| `ogc-api-features-ignore`                  | Multi-line list of test identifiers to ignore for OGC API - Features validation                                                      | `false`  | `''`                                 |
+| `ogc-api-tiles`                            | If set, validate OGC API - Tiles                                                                                                     | `false`  | `false`                              |
+| `ogc-api-tiles-tilematrixsetdefinitionurl` | URL to a tile matrix set definition                                                                                                  | `false`  | `''`                                 |
+| `ogc-api-tiles-urltemplatefortiles`        | URL template endpoint for tiles containing `tileMatrix`, `tileRow`, and `tileCol` variables. Multi-line: one validation run per line | `false`  | `''`                                 |
+| `ogc-api-tiles-tilematrix`                 | A valid tileMatrix numerical identifier                                                                                              | `false`  | `1`                                  |
+| `ogc-api-tiles-mintilerow`                 | The minimum tile row number (minTileRow) for the tile matrix                                                                         | `false`  | `0`                                  |
+| `ogc-api-tiles-maxtilerow`                 | The maximum tile row number (maxTileRow) for the tile matrix                                                                         | `false`  | `1`                                  |
+| `ogc-api-tiles-mintilecol`                 | The minimum tile column number (minTileCol) for the tile matrix                                                                      | `false`  | `0`                                  |
+| `ogc-api-tiles-maxtilecol`                 | The maximum tile column number (maxTileCol) for the tile matrix                                                                      | `false`  | `1`                                  |
+| `ogc-api-tiles-ignore`                     | Multi-line list of test identifiers to ignore for OGC API - Tiles validation                                                         | `false`  | `''`                                 |
 
 <!-- markdownlint-enable MD013 -->
+
+### Multiple tiles validations in one step
+
+`ogc-api-tiles-urltemplatefortiles` accepts multiple lines. Each line starts a
+separate OGC API - Tiles validation run against the same TeamEngine container.
+All other tiles inputs are shared between the runs.
+
+```yaml
+- uses: geo-engine/ogc-validator@v3
+  with:
+      service-url: http://localhost:8484/api/ogc/my-layer
+      ogc-api-tiles: true
+      ogc-api-tiles-tilematrixsetdefinitionurl: http://www.opengis.net/def/tilematrixset/OGC/1.0/WebMercatorQuad
+      ogc-api-tiles-urltemplatefortiles: |
+          http://localhost:8484/api/ogc/my-layer/collections/c/map/tiles/WebMercatorQuad/{tileMatrix}/{tileRow}/{tileCol}
+          http://localhost:8484/api/ogc/my-layer/collections/c/coverage/tiles/WebMercatorQuad/{tileMatrix}/{tileRow}/{tileCol}
+```
 
 ## Testing with `@github/local-action`
 

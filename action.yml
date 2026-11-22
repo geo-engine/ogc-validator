@@ -49,7 +49,8 @@ inputs:
     ogc-api-tiles-urltemplatefortiles:
         description:
             URL template endpoint for tiles containing tileMatrix, tileRow and
-            tileCol variables
+            tileCol variables. Multi-line input; each line starts a separate OGC
+            API - Tiles validation run (all other tiles inputs are shared)
         default: ''
     ogc-api-tiles-tilematrix:
         description: A valid tileMatrix numerical identifier

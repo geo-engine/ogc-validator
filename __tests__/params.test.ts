@@ -67,10 +67,11 @@ describe('getParams', () => {
             }
         });
         (core.getBooleanInput as jest.Mock).mockReturnValue(true);
-        (core.getMultilineInput as jest.Mock).mockReturnValue([
-            'ignore1',
-            'ignore2',
-        ]);
+        core.getMultilineInput.mockImplementation((name: string) =>
+            name === 'ogc-api-tiles-urltemplatefortiles'
+                ? ['https://example.com/tiles/{tileMatrix}/{tileRow}/{tileCol}']
+                : ['ignore1', 'ignore2']
+        );
 
         const params = getParams();
 
@@ -93,6 +94,97 @@ describe('getParams', () => {
                 ),
             ],
         });
+    });
+    it('should create one tiles service per URL template line', () => {
+        core.getInput.mockImplementation((name: string) => {
+            switch (name) {
+                case 'service-url':
+                    return 'https://example.com';
+                case 'teamengine-image':
+                    return 'teamengine-production:1.0-SNAPSHOT';
+                case 'ogc-api-tiles-tilematrixsetdefinitionurl':
+                    return 'https://example.com/tms';
+                case 'ogc-api-tiles-tilematrix':
+                case 'ogc-api-tiles-maxtilerow':
+                case 'ogc-api-tiles-maxtilecol':
+                    return '1';
+                case 'ogc-api-tiles-mintilerow':
+                case 'ogc-api-tiles-mintilecol':
+                    return '0';
+                default:
+                    return '';
+            }
+        });
+        core.getBooleanInput.mockImplementation(
+            (name: string) => name === 'ogc-api-tiles'
+        );
+        core.getMultilineInput.mockImplementation((name: string) =>
+            name === 'ogc-api-tiles-urltemplatefortiles'
+                ? [
+                      'https://example.com/map/{tileMatrix}/{tileRow}/{tileCol}',
+                      'https://example.com/coverage/{tileMatrix}/{tileRow}/{tileCol}',
+                  ]
+                : []
+        );
+
+        const params = getParams();
+
+        expect(params.services).toEqual([
+            new OgcApiTiles10Service(
+                [],
+                'https://example.com/tms',
+                'https://example.com/map/{tileMatrix}/{tileRow}/{tileCol}',
+                1,
+                0,
+                1,
+                0,
+                1,
+                1
+            ),
+            new OgcApiTiles10Service(
+                [],
+                'https://example.com/tms',
+                'https://example.com/coverage/{tileMatrix}/{tileRow}/{tileCol}',
+                1,
+                0,
+                1,
+                0,
+                1,
+                2
+            ),
+        ]);
+        expect(params.services.map((s) => s.name)).toEqual([
+            'OGC API - Tiles 1.0 (#1)',
+            'OGC API - Tiles 1.0 (#2)',
+        ]);
+        expect(params.services.map((s) => s.xmlFilePath)).toEqual([
+            'test-results-tiles-1.xml',
+            'test-results-tiles-2.xml',
+        ]);
+    });
+
+    it('should keep the single-run tiles name without run number', () => {
+        core.getInput.mockImplementation((name: string) => {
+            switch (name) {
+                case 'service-url':
+                    return 'https://example.com';
+                case 'teamengine-image':
+                    return 'teamengine-production:1.0-SNAPSHOT';
+                case 'ogc-api-tiles-tilematrix':
+                    return '1';
+                default:
+                    return '0';
+            }
+        });
+        core.getBooleanInput.mockImplementation(
+            (name: string) => name === 'ogc-api-tiles'
+        );
+        core.getMultilineInput.mockReturnValue([]);
+
+        const [tiles] = getParams().services;
+
+        expect(tiles.name).toBe('OGC API - Tiles 1.0');
+        expect(tiles.xmlFilePath).toBe('test-results-tiles.xml');
     });
 });
 
