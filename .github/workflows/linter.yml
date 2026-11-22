@@ -38,13 +38,13 @@ jobs:
         steps:
             - name: Checkout
               id: checkout
-              uses: actions/checkout@v5
+              uses: actions/checkout@v7
               with:
                   fetch-depth: 0
 
             - name: Setup Node.js
               id: setup-node
-              uses: actions/setup-node@v5
+              uses: actions/setup-node@v7
               with:
                   node-version-file: .node-version
                   cache: npm
@@ -55,7 +55,7 @@ jobs:
 
             - name: Lint Codebase
               id: super-linter
-              uses: super-linter/super-linter/slim@v8.6.0
+              uses: super-linter/super-linter/slim@v9.0.0
               env:
                   DEFAULT_BRANCH: main
                   FILTER_REGEX_EXCLUDE: dist/**/*
