@@ -64,7 +64,6 @@
         "jest": "^30.4.2",
         "make-coverage-badge": "^1.2.0",
         "prettier": "^3.8.3",
-        "prettier-eslint": "^16.4.2",
         "rollup": "^4.60.4",
         "ts-jest": "^29.4.11",
         "ts-jest-resolver": "^2.0.1",
@@ -73,5 +72,12 @@
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "*"
+    },
+    "overrides": {
+        "undici": "^6.29.1",
+        "glob": "^14.0.6",
+        "test-exclude": {
+            "minimatch": "^11.0.1"
+        }
     }
 }
