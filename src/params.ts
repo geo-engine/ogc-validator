@@ -95,27 +95,42 @@ export function getParams(): Params {
     }
 
     if (core.getBooleanInput(OGC_API_KEYS.TILES.FLAG)) {
-        params.services.push(
-            new OgcApiTiles10Service(
-                core.getMultilineInput(OGC_API_KEYS.TILES.TESTS_TO_IGNORE, {
-                    trimWhitespace: true,
-                }),
-                core.getInput(
-                    OGC_API_KEYS.TILES.TILE_MATRIX_SET_DEFINITION_URL,
-                    {
-                        trimWhitespace: true,
-                    }
-                ),
-                core.getInput(OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES, {
-                    trimWhitespace: true,
-                }),
-                getIntegerInput(OGC_API_KEYS.TILES.TILE_MATRIX),
-                getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_ROW),
-                getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_ROW),
-                getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_COL),
-                getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_COL)
-            )
+        const testsToIgnore = core.getMultilineInput(
+            OGC_API_KEYS.TILES.TESTS_TO_IGNORE,
+            { trimWhitespace: true }
         );
+        const tileMatrixSetDefinitionUrl = core.getInput(
+            OGC_API_KEYS.TILES.TILE_MATRIX_SET_DEFINITION_URL,
+            { trimWhitespace: true }
+        );
+        const tileMatrix = getIntegerInput(OGC_API_KEYS.TILES.TILE_MATRIX);
+        const minTileRow = getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_ROW);
+        const maxTileRow = getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_ROW);
+        const minTileCol = getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_COL);
+        const maxTileCol = getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_COL);
+
+        // one validation run per URL template line
+        let urlTemplates = core.getMultilineInput(
+            OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES,
+            { trimWhitespace: true }
+        );
+        if (!urlTemplates.length) urlTemplates = [''];
+
+        urlTemplates.forEach((urlTemplate, i) => {
+            params.services.push(
+                new OgcApiTiles10Service(
+                    testsToIgnore,
+                    tileMatrixSetDefinitionUrl,
+                    urlTemplate,
+                    tileMatrix,
+                    minTileRow,
+                    maxTileRow,
+                    minTileCol,
+                    maxTileCol,
+                    urlTemplates.length > 1 ? i + 1 : undefined
+                )
+            );
+        });
     }
 
     return params;

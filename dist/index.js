@@ -33543,9 +33543,12 @@ class OgcApiTiles10Service {
     maxTileRow;
     minTileCol;
     maxTileCol;
-    name = 'OGC API - Tiles 1.0';
-    xmlFilePath = 'test-results-tiles.xml';
-    constructor(testsToIgnore, tileMatrixSetDefinitionUrl, urlTemplateForTiles, tileMatrix, minTileRow, maxTileRow, minTileCol, maxTileCol) {
+    runNumber;
+    name;
+    xmlFilePath;
+    constructor(testsToIgnore, tileMatrixSetDefinitionUrl, urlTemplateForTiles, tileMatrix, minTileRow, maxTileRow, minTileCol, maxTileCol, 
+    /** 1-based run number; only set if there are multiple tiles runs */
+    runNumber) {
         this.testsToIgnore = testsToIgnore;
         this.tileMatrixSetDefinitionUrl = tileMatrixSetDefinitionUrl;
         this.urlTemplateForTiles = urlTemplateForTiles;
@@ -33554,11 +33557,27 @@ class OgcApiTiles10Service {
         this.maxTileRow = maxTileRow;
         this.minTileCol = minTileCol;
         this.maxTileCol = maxTileCol;
+        this.runNumber = runNumber;
+        const suffix = runNumber === undefined ? '' : ` (#${runNumber})`;
+        this.name = `OGC API - Tiles 1.0${suffix}`;
+        this.xmlFilePath =
+            runNumber === undefined
+                ? 'test-results-tiles.xml'
+                : `test-results-tiles-${runNumber}.xml`;
     }
     printParams() {
+        const prefix = this.runNumber === undefined ? '' : `[#${this.runNumber}] `;
         return [
             {
-                key: OGC_API_KEYS.TILES.TESTS_TO_IGNORE,
+                key: `${prefix}${OGC_API_KEYS.TILES.TILE_MATRIX_SET_DEFINITION_URL}`,
+                value: this.tileMatrixSetDefinitionUrl || '(none)',
+            },
+            {
+                key: `${prefix}${OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES}`,
+                value: this.urlTemplateForTiles || '(none)',
+            },
+            {
+                key: `${prefix}${OGC_API_KEYS.TILES.TESTS_TO_IGNORE}`,
                 value: this.testsToIgnore.join(', ') || '(none)',
             },
         ];
@@ -33647,13 +33666,20 @@ function getParams() {
         })));
     }
     if (getBooleanInput(OGC_API_KEYS.TILES.FLAG)) {
-        params.services.push(new OgcApiTiles10Service(getMultilineInput(OGC_API_KEYS.TILES.TESTS_TO_IGNORE, {
-            trimWhitespace: true,
-        }), getInput(OGC_API_KEYS.TILES.TILE_MATRIX_SET_DEFINITION_URL, {
-            trimWhitespace: true,
-        }), getInput(OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES, {
-            trimWhitespace: true,
-        }), getIntegerInput(OGC_API_KEYS.TILES.TILE_MATRIX), getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_ROW), getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_ROW), getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_COL), getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_COL)));
+        const testsToIgnore = getMultilineInput(OGC_API_KEYS.TILES.TESTS_TO_IGNORE, { trimWhitespace: true });
+        const tileMatrixSetDefinitionUrl = getInput(OGC_API_KEYS.TILES.TILE_MATRIX_SET_DEFINITION_URL, { trimWhitespace: true });
+        const tileMatrix = getIntegerInput(OGC_API_KEYS.TILES.TILE_MATRIX);
+        const minTileRow = getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_ROW);
+        const maxTileRow = getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_ROW);
+        const minTileCol = getIntegerInput(OGC_API_KEYS.TILES.MIN_TILE_COL);
+        const maxTileCol = getIntegerInput(OGC_API_KEYS.TILES.MAX_TILE_COL);
+        // one validation run per URL template line
+        let urlTemplates = getMultilineInput(OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES, { trimWhitespace: true });
+        if (!urlTemplates.length)
+            urlTemplates = [''];
+        urlTemplates.forEach((urlTemplate, i) => {
+            params.services.push(new OgcApiTiles10Service(testsToIgnore, tileMatrixSetDefinitionUrl, urlTemplate, tileMatrix, minTileRow, maxTileRow, minTileCol, maxTileCol, urlTemplates.length > 1 ? i + 1 : undefined));
+        });
     }
     return params;
 }
@@ -33701,6 +33727,7 @@ async function run() {
             const summary = await group(`Validating OGC API - ${serviceConfig.name}`, async () => {
                 info(`Validating OGC API - ${serviceConfig.name} …`);
                 return await validateOGCAPI({
+                    name: serviceConfig.name,
                     testRequest: serviceConfig.request(teamengine_url, params.serviceUrl),
                     testsToIgnore: serviceConfig.testsToIgnore,
                     xmlFilePath: serviceConfig.xmlFilePath,
@@ -33855,7 +33882,7 @@ async function stopContainer(containerId) {
 //             xmlFilePath,
 //         });
 // }
-async function validateOGCAPI({ testRequest, testsToIgnore, xmlFilePath, }) {
+async function validateOGCAPI({ name, testRequest, testsToIgnore, xmlFilePath, }) {
     info(`Running tests using URL <${testRequest.url}> …`);
     const testResult = await fetch(testRequest);
     if (!testResult.ok) {
@@ -33893,7 +33920,7 @@ async function validateOGCAPI({ testRequest, testsToIgnore, xmlFilePath, }) {
     }
     const failedAndNotIgnored = failed - ignored;
     return {
-        name: suite,
+        name: name ?? suite,
         success: failedAndNotIgnored === 0,
         passed,
         skipped,

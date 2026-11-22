@@ -97,8 +97,8 @@ export class OgcApiFeatures10Service implements OgcApiServiceConfig {
 }
 
 export class OgcApiTiles10Service implements OgcApiServiceConfig {
-    readonly name = 'OGC API - Tiles 1.0';
-    readonly xmlFilePath = 'test-results-tiles.xml';
+    readonly name: string;
+    readonly xmlFilePath: string;
 
     constructor(
         readonly testsToIgnore: string[],
@@ -108,13 +108,32 @@ export class OgcApiTiles10Service implements OgcApiServiceConfig {
         readonly minTileRow: number,
         readonly maxTileRow: number,
         readonly minTileCol: number,
-        readonly maxTileCol: number
-    ) {}
+        readonly maxTileCol: number,
+        /** 1-based run number; only set if there are multiple tiles runs */
+        readonly runNumber?: number
+    ) {
+        const suffix = runNumber === undefined ? '' : ` (#${runNumber})`;
+        this.name = `OGC API - Tiles 1.0${suffix}`;
+        this.xmlFilePath =
+            runNumber === undefined
+                ? 'test-results-tiles.xml'
+                : `test-results-tiles-${runNumber}.xml`;
+    }
 
     printParams(): Array<PrintParam> {
+        const prefix =
+            this.runNumber === undefined ? '' : `[#${this.runNumber}] `;
         return [
             {
-                key: OGC_API_KEYS.TILES.TESTS_TO_IGNORE,
+                key: `${prefix}${OGC_API_KEYS.TILES.TILE_MATRIX_SET_DEFINITION_URL}`,
+                value: this.tileMatrixSetDefinitionUrl || '(none)',
+            },
+            {
+                key: `${prefix}${OGC_API_KEYS.TILES.URL_TEMPLATE_FOR_TILES}`,
+                value: this.urlTemplateForTiles || '(none)',
+            },
+            {
+                key: `${prefix}${OGC_API_KEYS.TILES.TESTS_TO_IGNORE}`,
                 value: this.testsToIgnore.join(', ') || '(none)',
             },
         ];

@@ -42,6 +42,7 @@ export async function run(): Promise<void> {
                     core.info(`Validating OGC API - ${serviceConfig.name} …`);
 
                     return await validateOGCAPI({
+                        name: serviceConfig.name,
                         testRequest: serviceConfig.request(
                             teamengine_url,
                             params.serviceUrl
@@ -232,10 +233,12 @@ async function stopContainer(containerId: string) {
 // }
 
 export async function validateOGCAPI({
+    name,
     testRequest,
     testsToIgnore,
     xmlFilePath,
 }: {
+    name?: string;
     testRequest: Request;
     testsToIgnore: string[];
     xmlFilePath: string;
@@ -287,7 +290,7 @@ export async function validateOGCAPI({
     const failedAndNotIgnored = failed - ignored;
 
     return {
-        name: suite,
+        name: name ?? suite,
         success: failedAndNotIgnored === 0,
         passed,
         skipped,
